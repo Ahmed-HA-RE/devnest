@@ -1,4 +1,3 @@
-
 ## TypeScript
 
 - Strict mode enabled
@@ -39,7 +38,7 @@
 Example v4 configuration:
 
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-primary: oklch(50% 0.2 250);
@@ -47,7 +46,8 @@ Example v4 configuration:
 ```
 
 ## File Organization
-- Components:  If a component is only used within a specific route, place it in a route-scoped `_components` folder inside that route. If it is reused across multiple routes, place it in the global `@/components` directory.
+
+- Components: If a component is only used within a specific route, place it in a route-scoped `_components` folder inside that route. If it is reused across multiple routes, place it in the global `@/components` directory.
 - Pages: `@/app/[route]/page.tsx`
 - Server Actions: `@/lib/actions/[feature].ts-action`
 - Types: `@/types/[feature].ts`
@@ -56,7 +56,8 @@ Example v4 configuration:
 ## Naming
 
 - Components: PascalCase (`ItemCard.tsx`)
-- Files:  kebab-case (`item-card.tsx`)
+- Always use the arrow function syntax for components (e.g. `const ItemCard: React.FC<ItemCardProps> = () => { ... }`)
+- Files: kebab-case (`item-card.tsx`)
 - Functions: camelCase
 - Constants: SCREAMING_SNAKE_CASE
 - Types/Interfaces: PascalCase (no prefix)
@@ -80,8 +81,7 @@ Example v4 configuration:
 - Server components fetch directly with Prisma
 - Client components use Server Actions
 - Validate all inputs with Zod
-- Fetch data directly in server components but for large query avoid placing large or complex data-fetching logic directly inside the server component file. Instead, move database queries into dedicated server action files (e.g. @/lib/actions) and import them into the page.  
-
+- Fetch data directly in server components but for large query avoid placing large or complex data-fetching logic directly inside the server component file. Instead, move database queries into dedicated server action files (e.g. @/lib/actions) and import them into the page.
 
 ## Error Handling
 
@@ -94,4 +94,3 @@ Example v4 configuration:
 - No commented-out code unless specified
 - No unused imports or variables
 - Keep functions under 50 lines when possible
-

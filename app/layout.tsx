@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Geist } from 'next/font/google';
 import './globals.css';
+import { cn } from "@/lib/utils";
+import Providers from '@/components/providers/providers';
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({
   variable: '--font-inter',
@@ -19,8 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={inter.className}>
-      <body className='min-h-full flex flex-col'>{children}</body>
+    <html lang='en' className={cn(inter.className, "font-sans", geist.variable)} suppressHydrationWarning>
+      <body className='min-h-full flex flex-col'>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
