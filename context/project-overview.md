@@ -1,66 +1,69 @@
 # DevNest 🗂️
-> **Centralized Developer Knowledge Hub** — Store Smarter. Build Faster.
 
+> **Centralized Developer Knowledge Hub** — Store Smarter. Build Faster.
 
 ## Problem
 
 Developers keep their essentials scattered across too many places:
 
-| Where it lives now | What's lost |
-|---|---|
-| Snippets in VS Code / Notion | Context switching |
-| AI prompts buried in chats | Lost knowledge |
-| Docs in random folders | Inconsistent workflows |
-| Commands in `.txt` files or bash history | Wasted time re-searching |
-| Links in bookmarks, templates in gists | No single source of truth |
+| Where it lives now                       | What's lost               |
+| ---------------------------------------- | ------------------------- |
+| Snippets in VS Code / Notion             | Context switching         |
+| AI prompts buried in chats               | Lost knowledge            |
+| Docs in random folders                   | Inconsistent workflows    |
+| Commands in `.txt` files or bash history | Wasted time re-searching  |
+| Links in bookmarks, templates in gists   | No single source of truth |
 
 **DevNest is one searchable, AI-enhanced hub for all dev knowledge and resources.**
 
-
 ## Users
 
-| Persona | Core Need |
-|---|---|
-| Everyday Developer | Quick access to snippets, commands, links |
-| AI-First Developer | Store prompts, workflows, context files |
-| Content Creator / Educator | Save course notes, reusable code |
-| Full-Stack Builder | Patterns, boilerplates, API references |
+| Persona                    | Core Need                                 |
+| -------------------------- | ----------------------------------------- |
+| Everyday Developer         | Quick access to snippets, commands, links |
+| AI-First Developer         | Store prompts, workflows, context files   |
+| Content Creator / Educator | Save course notes, reusable code          |
+| Full-Stack Builder         | Patterns, boilerplates, API references    |
 
 ---
 
 ## Tech Stack
 
-| Category | Choice |
-|---|---|
-| Framework | Next.js (React 19) |
-| Language | TypeScript |
-| Database | Neon PostgreSQL + Prisma ORM |
-| Caching | Redis (optional) |
-| File Storage | Cloudflare R2 |
-| CSS / UI | Tailwind CSS v4 + ShadCN |
-| Auth | NextAuth v5 (email + GitHub OAuth) |
-| AI | OpenAI gpt-5-nano |
-| Deployment | Vercel |
-| Monitoring | Sentry (post-MVP) |
-
+| Category     | Choice                             |
+| ------------ | ---------------------------------- |
+| Framework    | Next.js (React 19)                 |
+| Language     | TypeScript                         |
+| Database     | Neon PostgreSQL + Prisma ORM       |
+| Caching      | Redis (optional)                   |
+| File Storage | Cloudflare R2                      |
+| CSS / UI     | Tailwind CSS v4 + ShadCN           |
+| Auth         | NextAuth v5 (email + GitHub OAuth) |
+| AI           | OpenAI gpt-5-nano                  |
+| Deployment   | Vercel                             |
+| Monitoring   | Sentry (post-MVP)                  |
 
 ## Core Features
 
 ### Item Types (System)
+
 `Snippet` · `Prompt` · `Note` · `Command` · `File` · `Image` · `URL`
 
 > Pro users can create custom item types.
 
 ### Collections
-Group mixed item types into named collections (e.g. *React Patterns*, *Python Snippets*, *Context Files*).
+
+Group mixed item types into named collections (e.g. _React Patterns_, _Python Snippets_, _Context Files_).
 
 ### Search
+
 Full-text search across content, tags, titles, and item types.
 
 ### Authentication
+
 Email + Password and GitHub OAuth via NextAuth v5.
 
 ### Item Features
+
 - Favorites & pinned items
 - Recently used
 - Markdown editor for text items
@@ -69,7 +72,8 @@ Email + Password and GitHub OAuth via NextAuth v5.
 - Export as JSON or ZIP
 - Dark mode (default)
 
-### AI Superpowers *(Pro)*
+### AI Superpowers _(Pro)_
+
 Powered by **OpenAI gpt-5-nano**
 
 - Auto-tagging
@@ -77,16 +81,14 @@ Powered by **OpenAI gpt-5-nano**
 - Explain Code
 - Prompt optimization
 
-
 ## Monetization
 
-| Plan | Price | Item Limit | Collections | AI | File Uploads | Custom Types | Export |
-|---|---|---|---|---|---|---|---|
-| Free | $0 | 50 | 3 | ✗ | Images only | ✗ | ✗ |
-| Pro | $8/mo · $72/yr | Unlimited | Unlimited | ✓ | All types | ✓ | ✓ |
+| Plan | Price          | Item Limit | Collections | AI  | File Uploads | Custom Types | Export |
+| ---- | -------------- | ---------- | ----------- | --- | ------------ | ------------ | ------ |
+| Free | $0             | 50         | 3           | ✗   | Images only  | ✗            | ✗      |
+| Pro  | $8/mo · $72/yr | Unlimited  | Unlimited   | ✓   | All types    | ✓            | ✓      |
 
 > Billing via **Stripe** with webhooks for subscription state sync.
-
 
 ## Data Model
 
@@ -185,7 +187,6 @@ erDiagram
   TAG  ||--o{ ITEMTAG : "tagged via"
 ```
 
-
 ## Architecture
 
 ### API Overview
@@ -228,7 +229,6 @@ flowchart TD
   Tags & Summary & Explain & Prompt --> UI["UI updated"]
 ```
 
-
 ## UI / UX
 
 **Design direction:** dark-first, minimal, developer-friendly — inspired by Notion, Linear, and Raycast.
@@ -256,10 +256,17 @@ flowchart TD
 - Full-screen item editor with markdown support and syntax highlighting
 - Mobile: sidebar becomes a drawer, touch-optimized buttons
 
+### Screenshots
+
+Below are the design screenshots for the dashboard. It doesn't have to be pixel perfect, but it should be close enough to what I have in mind.
+
+- @/context/screenshots/dashboard-ui-main.png
+- @/context/screenshots/dashboard-ui-drawer.png
 
 ## Roadmap
 
 ### MVP
+
 - [ ] Items CRUD (all system types)
 - [ ] Collections
 - [ ] Full-text search
@@ -268,6 +275,7 @@ flowchart TD
 - [ ] Free tier limits enforcement
 
 ### Pro Phase
+
 - [ ] AI features (auto-tag, summary, explain, optimize)
 - [ ] Custom item types
 - [ ] File uploads → Cloudflare R2
@@ -275,9 +283,9 @@ flowchart TD
 - [ ] Stripe billing + upgrade flow
 
 ### Future
+
 - [ ] Shared collections
 - [ ] Team / Org plans
 - [ ] VS Code extension
 - [ ] Browser extension
 - [ ] Public API + CLI tool
-
