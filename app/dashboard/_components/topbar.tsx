@@ -1,19 +1,14 @@
-import Link from 'next/link';
 import { FiFolderPlus, FiPlus, FiSearch } from 'react-icons/fi';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import ThemeToggle from './theme-toggle';
 
 const Topbar = () => {
   return (
     <header className='flex items-center justify-between gap-4 border-b px-6 py-3'>
-      <Link href='/' className='flex items-center gap-2'>
-        <div className='flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground font-semibold'>
-          D
-        </div>
-        <span className='font-semibold'>DevNest</span>
-      </Link>
+      <SidebarTrigger />
       <div className='relative max-w-sm flex-1'>
         <FiSearch className='pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground' />
         <Input

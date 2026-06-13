@@ -1,14 +1,10 @@
-import ThemeProvider from '@/components/ui/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { ThemeProvider } from '@teispace/next-themes';
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ThemeProvider
-      attribute='class'
-      defaultTheme='dark'
-      enableSystem={false}
-      disableTransitionOnChange
-    >
-      {children}
+    <ThemeProvider attribute='class'>
+      <TooltipProvider>{children}</TooltipProvider>
     </ThemeProvider>
   );
 };

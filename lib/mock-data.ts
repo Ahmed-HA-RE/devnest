@@ -17,6 +17,8 @@ export type Collection = {
   isFavorite: boolean;
   color?: string;
   icon: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type Item = {
@@ -39,7 +41,7 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  avatarUrl?: string;
+  image?: string;
   isPro: boolean;
 };
 
@@ -47,6 +49,7 @@ export const currentUser: User = {
   id: 'user-1',
   name: 'John Doe',
   email: 'john@example.com',
+  image: '/images/default-avatar.png',
   isPro: false,
 };
 
@@ -55,6 +58,7 @@ export const itemTypes: ItemType[] = [
     id: 'type-snippet',
     name: 'Snippets',
     icon: 'code',
+    color: '#3b82f6',
     isSystem: true,
     itemCount: 24,
   },
@@ -62,6 +66,7 @@ export const itemTypes: ItemType[] = [
     id: 'type-prompt',
     name: 'Prompts',
     icon: 'sparkles',
+    color: '#a855f7',
     isSystem: true,
     itemCount: 18,
   },
@@ -69,6 +74,7 @@ export const itemTypes: ItemType[] = [
     id: 'type-command',
     name: 'Commands',
     icon: 'terminal',
+    color: '#22c55e',
     isSystem: true,
     itemCount: 15,
   },
@@ -76,6 +82,7 @@ export const itemTypes: ItemType[] = [
     id: 'type-note',
     name: 'Notes',
     icon: 'file-text',
+    color: '#eab308',
     isSystem: true,
     itemCount: 12,
   },
@@ -83,6 +90,7 @@ export const itemTypes: ItemType[] = [
     id: 'type-file',
     name: 'Files',
     icon: 'folder',
+    color: '#f97316',
     isSystem: true,
     itemCount: 5,
   },
@@ -90,10 +98,18 @@ export const itemTypes: ItemType[] = [
     id: 'type-image',
     name: 'Images',
     icon: 'image',
+    color: '#ec4899',
     isSystem: true,
     itemCount: 3,
   },
-  { id: 'type-url', name: 'Links', icon: 'link', isSystem: true, itemCount: 8 },
+  {
+    id: 'type-url',
+    name: 'Links',
+    icon: 'link',
+    color: '#06b6d4',
+    isSystem: true,
+    itemCount: 8,
+  },
 ];
 
 export const collections: Collection[] = [
@@ -105,6 +121,8 @@ export const collections: Collection[] = [
     isFavorite: true,
     color: 'yellow',
     icon: 'star',
+    createdAt: '2025-11-02',
+    updatedAt: '2026-01-15',
   },
   {
     id: 'col-python-snippets',
@@ -113,6 +131,8 @@ export const collections: Collection[] = [
     itemCount: 8,
     isFavorite: false,
     icon: 'code',
+    createdAt: '2025-10-20',
+    updatedAt: '2026-01-14',
   },
   {
     id: 'col-context-files',
@@ -122,6 +142,8 @@ export const collections: Collection[] = [
     isFavorite: true,
     color: 'purple',
     icon: 'file-text',
+    createdAt: '2025-12-01',
+    updatedAt: '2026-01-13',
   },
   {
     id: 'col-interview-prep',
@@ -130,6 +152,8 @@ export const collections: Collection[] = [
     itemCount: 24,
     isFavorite: false,
     icon: 'folder',
+    createdAt: '2025-09-10',
+    updatedAt: '2026-01-10',
   },
   {
     id: 'col-git-commands',
@@ -139,6 +163,8 @@ export const collections: Collection[] = [
     isFavorite: true,
     color: 'orange',
     icon: 'terminal',
+    createdAt: '2025-08-22',
+    updatedAt: '2026-01-08',
   },
   {
     id: 'col-ai-prompts',
@@ -147,6 +173,8 @@ export const collections: Collection[] = [
     itemCount: 18,
     isFavorite: false,
     icon: 'sparkles',
+    createdAt: '2025-07-05',
+    updatedAt: '2026-01-05',
   },
 ];
 

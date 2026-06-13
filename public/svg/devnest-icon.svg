@@ -1,0 +1,21 @@
+<svg width="76" height="136" viewBox="0 0 76 136" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .l1 { fill: #1D4ED8; }
+    .l2 { fill: #2563EB; }
+    .l3 { fill: #3B82F6; }
+    .l4 { fill: #60A5FA; }
+    .shine { fill: #93C5FD; opacity: 0.4; }
+  </style>
+  <g transform="translate(38, 10)">
+    <rect x="-38" y="92" width="76" height="14" class="l1"/>
+    <ellipse cx="0" cy="106" rx="38" ry="10" class="l1"/>
+    <ellipse cx="0" cy="92"  rx="38" ry="10" class="l2"/>
+    <rect x="-30" y="62" width="60" height="14" class="l2"/>
+    <ellipse cx="0" cy="76"  rx="30" ry="8"  class="l2"/>
+    <ellipse cx="0" cy="62"  rx="30" ry="8"  class="l3"/>
+    <rect x="-22" y="36" width="44" height="14" class="l3"/>
+    <ellipse cx="0" cy="50"  rx="22" ry="6"  class="l3"/>
+    <ellipse cx="0" cy="36"  rx="22" ry="6"  class="l4"/>
+    <ellipse cx="-6" cy="35" rx="8"  ry="2.5" class="shine"/>
+  </g>
+</svg>
