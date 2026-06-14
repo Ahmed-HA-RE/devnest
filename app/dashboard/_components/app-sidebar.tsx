@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { getIcon } from '@/components/icon-map';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -11,23 +14,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { collections, itemTypes } from '@/lib/mock-data';
-import { FaStar } from 'react-icons/fa6';
+import { FaRegFolderOpen, FaStar } from 'react-icons/fa6';
+import { FiFolderPlus, FiPlus } from 'react-icons/fi';
 import SidebarUserDropdown from './sidebar-user-dropdown';
 import Image from 'next/image';
 
 const logoStyles = { width: 20, height: 50 };
 
-const RECENT_COLLECTIONS_COUNT = 3;
-
 const favoriteCollections = collections.filter((c) => c.isFavorite);
 
-const recentCollections = [...collections]
-  .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-  .slice(0, RECENT_COLLECTIONS_COUNT);
-
 const AppSidebar = () => {
+  const { state, isMobile, setOpenMobile } = useSidebar();
+
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='self-start'>
@@ -58,6 +59,28 @@ const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        {isMobile && (
+          <SidebarGroup>
+            <SidebarGroupContent className='flex flex-col gap-2'>
+              <Button
+                variant='outline'
+                className='w-full justify-start'
+                onClick={() => setOpenMobile(false)}
+              >
+                <FiFolderPlus />
+                New Collection
+              </Button>
+              <Button
+                className='w-full justify-start'
+                onClick={() => setOpenMobile(false)}
+              >
+                <FiPlus />
+                New Item
+              </Button>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
         <SidebarGroup>
           <SidebarGroupLabel>Types</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -87,14 +110,18 @@ const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {favoriteCollections.map((collection) => {
-                const Icon = getIcon(collection.icon);
                 return (
                   <SidebarMenuItem key={collection.id}>
                     <SidebarMenuButton asChild tooltip={collection.name}>
                       <Link href={`/collections/${collection.id}`}>
-                        <Icon />
-                        <span>{collection.name}</span>
-                        <FaStar className='ml-auto text-yellow-500' />
+                        {state === 'collapsed' ? (
+                          <FaRegFolderOpen />
+                        ) : (
+                          <>
+                            <span>{collection.name}</span>
+                            <FaStar className='ml-auto text-yellow-500' />
+                          </>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -105,16 +132,15 @@ const AppSidebar = () => {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Recent</SidebarGroupLabel>
+          <SidebarGroupLabel>Collections</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {recentCollections.map((collection) => {
-                const Icon = getIcon(collection.icon);
+              {collections.map((collection) => {
                 return (
                   <SidebarMenuItem key={collection.id}>
                     <SidebarMenuButton asChild tooltip={collection.name}>
                       <Link href={`/collections/${collection.id}`}>
-                        <Icon />
+                        <FaRegFolderOpen />
                         <span>{collection.name}</span>
                         <span className='ml-auto text-xs text-muted-foreground'>
                           {collection.itemCount}
