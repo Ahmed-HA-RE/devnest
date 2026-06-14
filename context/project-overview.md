@@ -94,8 +94,11 @@ Powered by **OpenAI gpt-5-nano**
 
 ```prisma
 model User {
-  id                   String       @id @default(uuid())
+  id                   String       @id
+  name                 String
   email                String       @unique
+  emailVerified       Boolean
+  image                String?
   password             String?
   isPro                Boolean      @default(false)
   stripeCustomerId     String?
@@ -106,6 +109,8 @@ model User {
   tags                 Tag[]
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
+
+  @@map("user")
 }
 
 model Item {
@@ -256,7 +261,7 @@ flowchart TD
 - Full-screen item editor with markdown support and syntax highlighting
 - Mobile: sidebar becomes a drawer, touch-optimized buttons
 
-### Screenshots
+### Screenshotsb
 
 Below are the design screenshots for the dashboard. It doesn't have to be pixel perfect, but it should be close enough to what I have in mind.
 

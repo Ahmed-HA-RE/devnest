@@ -9,4 +9,4 @@ Refer to these files for more context on DevNest:
 - @/context/project-overview.md
 - @/context/code-standards.md
 - @/context/ai-interaction.md
-- @/context/current-feature .md
+- @/context/current-feature.md

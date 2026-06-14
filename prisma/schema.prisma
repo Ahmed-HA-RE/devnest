@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String  @id
+  name          String
+  email         String  @unique
+  emailVerified Boolean @default(false)
+  image         String?
+
+  isPro                Boolean @default(false)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+
+  sessions    Session[]
+  accounts    Account[]
+  items       Item[]
+  itemTypes   ItemType[]
+  collections Collection[]
+  tags        Tag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ─────────────────────────────────────────────
+// DevNest app models
+// ─────────────────────────────────────────────
+
+model Item {
+  id           String      @id @default(uuid())
+  title        String
+  contentType  String // "text" | "file"
+  content      String? // text-based items only
+  fileUrl      String?
+  fileName     String?
+  fileSize     Int?
+  url          String?
+  description  String?
+  language     String? // syntax highlighting hint
+  isFavorite   Boolean     @default(false)
+  isPinned     Boolean     @default(false)
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  typeId       String
+  type         ItemType    @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  collectionId String?
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  tags         ItemTag[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([typeId])
+  @@index([collectionId])
+  @@map("item")
+}
+
+model ItemType {
+  id       String  @id @default(uuid())
+  name     String
+  icon     String?
+  color    String?
+  isSystem Boolean @default(false) // true = built-in type
+  userId   String?
+  user     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items    Item[]
+
+  @@index([userId])
+  @@map("item_type")
+}
+
+model Collection {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isFavorite  Boolean  @default(false)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       Item[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("collection")
+}
+
+model Tag {
+  id     String    @id @default(uuid())
+  name   String
+  userId String
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  ItemTag[]
+
+  @@index([userId])
+  @@map("tag")
+}
+
+model ItemTag {
+  itemId String
+  tagId  String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, tagId])
+  @@map("item_tag")
+}
