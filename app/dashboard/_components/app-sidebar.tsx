@@ -1,8 +1,8 @@
-'use client';
-
 import Link from 'next/link';
+import Image from 'next/image';
+import { FaRegFolderOpen } from 'react-icons/fa6';
+
 import { getIcon } from '@/components/icon-map';
-import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -14,20 +14,49 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '@/components/ui/sidebar';
-import { collections, itemTypes } from '@/lib/mock-data';
-import { FaRegFolderOpen, FaStar } from 'react-icons/fa6';
-import { FiFolderPlus, FiPlus } from 'react-icons/fi';
+import { CURRENT_USER_ID } from '@/lib/constants/app';
+import { getTextColor } from '@/lib/colors';
+import { prisma } from '@/lib/db';
+import SidebarFavoriteCollection from './sidebar-favorite-collection';
+import SidebarMobileActions from './sidebar-mobile-actions';
 import SidebarUserDropdown from './sidebar-user-dropdown';
-import Image from 'next/image';
 
 const logoStyles = { width: 20, height: 50 };
 
-const favoriteCollections = collections.filter((c) => c.isFavorite);
+// Display order for system item types in the sidebar.
+const ITEM_TYPE_ORDER = [
+  'snippet',
+  'command',
+  'note',
+  'file',
+  'prompt',
+  'image',
+  'link',
+];
 
-const AppSidebar = () => {
-  const { state, isMobile, setOpenMobile } = useSidebar();
+const AppSidebar = async () => {
+  const [itemTypes, favoriteCollections, collections] = await Promise.all([
+    prisma.itemType.findMany({
+      where: { isSystem: true },
+      include: {
+        _count: { select: { items: { where: { userId: CURRENT_USER_ID } } } },
+      },
+    }),
+    prisma.collection.findMany({
+      where: { userId: CURRENT_USER_ID, isFavorite: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.collection.findMany({
+      where: { userId: CURRENT_USER_ID },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { items: true } } },
+    }),
+  ]);
+
+  const sortedItemTypes = [...itemTypes].sort(
+    (a, b) => ITEM_TYPE_ORDER.indexOf(a.name) - ITEM_TYPE_ORDER.indexOf(b.name),
+  );
 
   return (
     <Sidebar collapsible='icon'>
@@ -59,42 +88,28 @@ const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {isMobile && (
-          <SidebarGroup>
-            <SidebarGroupContent className='flex flex-col gap-2'>
-              <Button
-                variant='outline'
-                className='w-full justify-start'
-                onClick={() => setOpenMobile(false)}
-              >
-                <FiFolderPlus />
-                New Collection
-              </Button>
-              <Button
-                className='w-full justify-start'
-                onClick={() => setOpenMobile(false)}
-              >
-                <FiPlus />
-                New Item
-              </Button>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+        <SidebarMobileActions />
 
         <SidebarGroup>
           <SidebarGroupLabel>Types</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {itemTypes.map((type) => {
-                const Icon = getIcon(type.icon);
+              {sortedItemTypes.map((type) => {
+                const Icon = getIcon(type.name);
+                const { className, style } = getTextColor(
+                  type.color ?? undefined,
+                );
                 return (
                   <SidebarMenuItem key={type.id}>
-                    <SidebarMenuButton asChild tooltip={type.name}>
-                      <Link href={`/items/${type.name.toLowerCase()}`}>
-                        <Icon style={{ color: type.color }} />
-                        <span>{type.name}</span>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={`${type.name.charAt(0).toUpperCase()}${type.name.slice(1)}s`}
+                    >
+                      <Link href={`/items/${type.name}`}>
+                        <Icon className={className} style={style} />
+                        <span className='capitalize'>{type.name}s</span>
                         <span className='ml-auto text-xs text-muted-foreground'>
-                          {type.itemCount}
+                          {type._count.items}
                         </span>
                       </Link>
                     </SidebarMenuButton>
@@ -105,34 +120,33 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Favorites</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {favoriteCollections.map((collection) => {
-                return (
-                  <SidebarMenuItem key={collection.id}>
-                    <SidebarMenuButton asChild tooltip={collection.name}>
-                      <Link href={`/collections/${collection.id}`}>
-                        {state === 'collapsed' ? (
-                          <FaRegFolderOpen />
-                        ) : (
-                          <>
-                            <span>{collection.name}</span>
-                            <FaStar className='ml-auto text-yellow-500' />
-                          </>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {favoriteCollections.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Favorites</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {favoriteCollections.map((collection) => (
+                  <SidebarFavoriteCollection
+                    key={collection.id}
+                    id={collection.id}
+                    name={collection.name}
+                  />
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup>
-          <SidebarGroupLabel>Collections</SidebarGroupLabel>
+          <div className='flex items-center justify-between'>
+            <SidebarGroupLabel>Collections</SidebarGroupLabel>
+            <Link
+              href='/collections'
+              className='text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:hidden mr-2'
+            >
+              View all
+            </Link>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               {collections.map((collection) => {
@@ -143,7 +157,7 @@ const AppSidebar = () => {
                         <FaRegFolderOpen />
                         <span>{collection.name}</span>
                         <span className='ml-auto text-xs text-muted-foreground'>
-                          {collection.itemCount}
+                          {collection._count.items}
                         </span>
                       </Link>
                     </SidebarMenuButton>

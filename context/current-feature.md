@@ -2,9 +2,18 @@
 
 <!-- Feature name -->
 
+Stats & Sidebar (Real Data)
+
 <!-- Feature Description -->
 
+Show the stats in the main area from the data in the database instead of the `lib/mock-data.ts` file. Show the system item types in the sidebar, favorite collections, and the actual collection data from the database.
+
 <!-- Goals -->
+
+- Fetch in the SSR component; display stats pertaining to database data, keeping the current design/layout
+- Display item types in sidebar with their icons, linking to `/items/[typename]`
+- Add a "View All" link on the same row as the collections label (justify-between layout) that navigates to `/collections`
+- Keep the star icons for favorite collections
 
 <!-- Status -->
 
@@ -18,3 +27,4 @@ Completed
 - 2026-06-14: Set up Prisma 7 + Neon PostgreSQL. Added `prisma/schema.prisma` with the DevNest data model (User, Item, ItemType, Collection, Tag, ItemTag) plus Better Auth core models (Account, Session, Verification), each with indexes and cascade deletes. Added `prisma.config.ts` (Prisma 7 config + seed command), a `PrismaNeon` adapter-based client singleton at `lib/db.ts`, `.env`/`.env.example` for `DATABASE_URL`, and a seed script (`prisma/seed.ts`) that loads `lib/mock-data.ts` into the dev database. Ran the initial migration and seed successfully; build passes.
 - 2026-06-15: Implemented Dashboard Collections (Real Data) — `recent-collections.tsx` now fetches the 6 most-recently-created collections directly from Prisma/Neon (with their items and item types), replacing `lib/mock-data.ts`. Added a `getCollectionTypeInfo` helper to compute the distinct item types per collection and the most-used type, used to derive the card's left border color (via an updated `getBorderColor` in `lib/colors.ts` supporting hex colors) and the row of small type icons (via `getIcon(type.name)`, matching the refactored `iconMap`). Added `CURRENT_USER_ID` placeholder constant in `lib/constants/app.ts` until auth is implemented. Build passes.
 - 2026-06-15: Implemented Dashboard Items (Real Data) — `pinned-items.tsx` and `recent-items.tsx` now fetch directly from Prisma/Neon (pinned items for the current user, and the 10 most recently created items), replacing `lib/mock-data.ts`. Refactored `item-row.tsx` to a shared `ItemWithRelations` type (`Prisma.ItemGetPayload` with `type` and `tags.tag` includes), using `getIcon(item.type.name)` for the row icon and showing `FaThumbtack`/`FaStar` for pinned/favorite items. Build passes.
+- 2026-06-15: Implemented Stats & Sidebar (Real Data) — `stats-cards.tsx` is now an async server component fetching item/collection/favorite counts via `prisma.count` for the current user, replacing `lib/mock-data.ts`. `app-sidebar.tsx` became an async server component fetching system item types (with per-type item counts via a filtered `_count`), favorite collections, and all collections from Prisma. Item types are shown in a fixed order (Snippets, Commands, Notes, Files, Prompts, Images, Links) with pluralized labels and link to `/items/[typename]`. Extracted `sidebar-mobile-actions.tsx` and `sidebar-favorite-collection.tsx` as client components for the `useSidebar`-dependent bits (mobile quick actions, collapsed favorite icon/star). Added a "View all" link to the Collections sidebar group label row, navigating to `/collections`. Build passes.

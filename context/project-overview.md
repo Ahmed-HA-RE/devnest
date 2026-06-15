@@ -261,7 +261,7 @@ flowchart TD
 - Full-screen item editor with markdown support and syntax highlighting
 - Mobile: sidebar becomes a drawer, touch-optimized buttons
 
-### Screenshotsb
+### Screenshots
 
 Below are the design screenshots for the dashboard. It doesn't have to be pixel perfect, but it should be close enough to what I have in mind.
 
