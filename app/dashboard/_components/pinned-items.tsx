@@ -1,12 +1,19 @@
 import { VscPinned } from 'react-icons/vsc';
-
 import { Card } from '@/components/ui/card';
-import { items } from '@/lib/mock-data';
+import { CURRENT_USER_ID } from '@/lib/constants/app';
+import { prisma } from '@/lib/db';
 import ItemRow from './item-row';
 
-const pinnedItems = items.filter((item) => item.isPinned);
+const PinnedItems = async () => {
+  const pinnedItems = await prisma.item.findMany({
+    where: { userId: CURRENT_USER_ID, isPinned: true },
+    orderBy: { updatedAt: 'desc' },
+    include: {
+      type: { select: { name: true, color: true } },
+      tags: { include: { tag: { select: { name: true } } } },
+    },
+  });
 
-const PinnedItems = () => {
   if (pinnedItems.length === 0) return null;
 
   return (

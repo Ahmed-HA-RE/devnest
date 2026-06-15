@@ -3,16 +3,22 @@ import { FaStar, FaThumbtack } from 'react-icons/fa6';
 
 import { getIcon } from '@/components/icon-map';
 import { Badge } from '@/components/ui/badge';
-import { itemTypes, type Item } from '@/lib/mock-data';
+import { Prisma } from '@/prisma/generated/prisma/client';
 
-const ItemRow = ({ item }: { item: Item }) => {
-  const type = itemTypes.find((t) => t.id === item.typeId);
-  const Icon = getIcon(type?.icon ?? 'folder');
+export type ItemWithRelations = Prisma.ItemGetPayload<{
+  include: {
+    type: { select: { name: true; color: true } };
+    tags: { include: { tag: { select: { name: true } } } };
+  };
+}>;
+
+const ItemRow = ({ item }: { item: ItemWithRelations }) => {
+  const Icon = getIcon(item.type.name);
 
   return (
     <div className='flex items-center gap-3 border-b px-4 py-3 last:border-b-0'>
       <div className='flex size-8 shrink-0 items-center justify-center rounded-md bg-muted'>
-        {Icon({ className: 'size-4', style: { color: type?.color } })}
+        {Icon({ className: 'size-4', style: { color: item.type.color ?? undefined } })}
       </div>
       <div className='min-w-0 flex-1'>
         <div className='flex items-center gap-2'>
@@ -29,16 +35,16 @@ const ItemRow = ({ item }: { item: Item }) => {
         </p>
         {item.tags.length > 0 && (
           <div className='mt-1.5 flex flex-wrap gap-1'>
-            {item.tags.map((tag) => (
-              <Badge key={tag} variant='secondary'>
-                {tag}
+            {item.tags.map(({ tag }) => (
+              <Badge key={tag.name} variant='secondary'>
+                {tag.name}
               </Badge>
             ))}
           </div>
         )}
       </div>
       <span className='shrink-0 text-xs text-muted-foreground'>
-        {format(new Date(item.createdAt), 'MMM d')}
+        {format(item.createdAt, 'MMM d')}
       </span>
     </div>
   );

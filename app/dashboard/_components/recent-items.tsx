@@ -1,14 +1,21 @@
 import { Card } from '@/components/ui/card';
-import { items } from '@/lib/mock-data';
+import { CURRENT_USER_ID } from '@/lib/constants/app';
+import { prisma } from '@/lib/db';
 import ItemRow from './item-row';
 
 const RECENT_ITEMS_COUNT = 10;
 
-const recentItems = [...items]
-  .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-  .slice(0, RECENT_ITEMS_COUNT);
+const RecentItems = async () => {
+  const recentItems = await prisma.item.findMany({
+    where: { userId: CURRENT_USER_ID },
+    orderBy: { createdAt: 'desc' },
+    take: RECENT_ITEMS_COUNT,
+    include: {
+      type: { select: { name: true, color: true } },
+      tags: { include: { tag: { select: { name: true } } } },
+    },
+  });
 
-const RecentItems = () => {
   return (
     <section>
       <h3 className='mb-3 text-sm font-medium text-muted-foreground'>
