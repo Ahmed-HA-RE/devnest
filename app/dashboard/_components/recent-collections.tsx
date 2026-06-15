@@ -3,17 +3,64 @@ import { FaRegFolderOpen, FaStar } from 'react-icons/fa6';
 
 import { getIcon } from '@/components/icon-map';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { CURRENT_USER_ID } from '@/lib/constants/app';
 import { getBorderColor, getTextColor } from '@/lib/colors';
-import { collections, items, itemTypes } from '@/lib/mock-data';
+import { prisma } from '@/lib/db';
 import { cn } from '@/lib/utils';
+import { Prisma } from '@/prisma/generated/prisma/client';
 
 const RECENT_COLLECTIONS_COUNT = 6;
 
-const recentCollections = [...collections]
-  .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-  .slice(0, RECENT_COLLECTIONS_COUNT);
+type CollectionItem = Prisma.ItemGetPayload<{
+  select: {
+    type: { select: { id: true; name: true; color: true } };
+  };
+}>;
 
-const RecentCollections = () => {
+// Returns the distinct item types in a collection and the most-used one.
+const getCollectionTypeInfo = (items: CollectionItem[]) => {
+  const typeCounts = new Map<string, number>();
+  const types: CollectionItem['type'][] = [];
+
+  for (const { type } of items) {
+    typeCounts.set(type.id, (typeCounts.get(type.id) ?? 0) + 1);
+
+    if (!types.some((t) => t.id === type.id)) {
+      types.push(type);
+    }
+  }
+
+  let primaryType: CollectionItem['type'] | null = null;
+  for (const type of types) {
+    const isMoreUsed =
+      !primaryType ||
+      (typeCounts.get(type.id) ?? 0) > (typeCounts.get(primaryType.id) ?? 0);
+    if (isMoreUsed) primaryType = type;
+  }
+
+  return { types, primaryType };
+};
+
+const RecentCollections = async () => {
+  const collections = await prisma.collection.findMany({
+    where: { userId: CURRENT_USER_ID },
+    orderBy: { createdAt: 'desc' },
+    take: RECENT_COLLECTIONS_COUNT,
+    include: {
+      items: {
+        include: {
+          type: {
+            select: {
+              id: true,
+              name: true,
+              color: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
   return (
     <section>
       <div className='mb-3 flex items-center justify-between'>
@@ -28,19 +75,19 @@ const RecentCollections = () => {
         </Link>
       </div>
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        {recentCollections.map((collection) => {
-          const types = [
-            ...new Set(
-              items
-                .filter((item) => item.collectionId === collection.id)
-                .map((item) => item.typeId),
-            ),
-          ].map((typeId) => itemTypes.find((type) => type.id === typeId));
+        {collections.map((collection) => {
+          const { types, primaryType } = getCollectionTypeInfo(
+            collection.items,
+          );
+
+          const { className: borderClassName, style: borderStyle } =
+            getBorderColor(primaryType?.color ?? undefined);
 
           return (
             <Card
               key={collection.id}
-              className={cn('border-l-4', getBorderColor(collection.color))}
+              className={cn('border-l-4', borderClassName)}
+              style={borderStyle}
             >
               <CardHeader className='flex-row items-center justify-between'>
                 <div className='flex items-center gap-2'>
@@ -53,19 +100,24 @@ const RecentCollections = () => {
               </CardHeader>
               <CardContent>
                 <p className='text-sm text-muted-foreground'>
-                  {collection.itemCount} items
+                  {collection.items.length}{' '}
+                  {collection.items.length === 1 ? 'item' : 'items'}
                 </p>
-                <p className='mt-1 text-sm text-muted-foreground'>
-                  {collection.description}
-                </p>
+                {collection.description && (
+                  <p className='mt-1 text-sm text-muted-foreground'>
+                    {collection.description}
+                  </p>
+                )}
                 {types.length > 0 && (
                   <div className='mt-3 flex gap-2'>
                     {types.map((type) => {
-                      const TypeIcon = getIcon(type?.icon ?? 'folder');
-                      const { className, style } = getTextColor(type?.color);
+                      const TypeIcon = getIcon(type.name);
+                      const { className, style } = getTextColor(
+                        type.color ?? undefined,
+                      );
                       return (
                         <TypeIcon
-                          key={type?.id}
+                          key={type.id}
                           className={cn(
                             'size-4 text-muted-foreground',
                             className,

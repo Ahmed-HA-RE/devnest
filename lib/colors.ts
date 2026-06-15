@@ -35,7 +35,11 @@ export function getTextColor(color?: string): {
   return { className: textColorMap[color] };
 }
 
-export function getBorderColor(color?: string): string {
-  if (!color) return 'border-l-border';
-  return borderColorMap[color] ?? 'border-l-border';
+export function getBorderColor(color?: string): {
+  className?: string;
+  style?: CSSProperties;
+} {
+  if (!color) return { className: 'border-l-border' };
+  if (isHexColor(color)) return { style: { borderLeftColor: color } };
+  return { className: borderColorMap[color] ?? 'border-l-border' };
 }

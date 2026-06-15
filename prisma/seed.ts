@@ -1,13 +1,9 @@
-import "dotenv/config";
-import { randomUUID } from "crypto";
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { PrismaClient } from "./generated/prisma/client";
-import {
-  currentUser,
-  itemTypes,
-  collections,
-  items,
-} from "../lib/mock-data";
+import 'dotenv/config';
+import { randomUUID } from 'crypto';
+import { PrismaNeon } from '@prisma/adapter-neon';
+import { PrismaClient } from './generated/prisma/client';
+import { currentUser } from '../lib/mock-data';
+import { itemTypes, collections, items } from './seed-data';
 
 const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -87,7 +83,7 @@ async function main() {
       item.tags.map((tagName) => ({
         itemId: item.id,
         tagId: tagIds.get(tagName)!,
-      }))
+      })),
     ),
   });
 }
