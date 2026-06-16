@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { FaRegFolderOpen } from 'react-icons/fa6';
 
 import { getIcon } from '@/components/icon-map';
+import { Badge } from '@/components/ui/badge';
 import {
   Sidebar,
   SidebarContent,
@@ -108,6 +109,11 @@ const AppSidebar = async () => {
                       <Link href={`/items/${type.name}`}>
                         <Icon className={className} style={style} />
                         <span className='capitalize'>{type.name}s</span>
+                        {(type.name === 'image' || type.name === 'file') && (
+                          <Badge className='pro-badge ml-1 border-0 px-1.5 py-0 text-[10px] font-semibold tracking-wider group-data-[collapsible=icon]:hidden'>
+                            PRO
+                          </Badge>
+                        )}
                         <span className='ml-auto text-xs text-muted-foreground'>
                           {type._count.items}
                         </span>

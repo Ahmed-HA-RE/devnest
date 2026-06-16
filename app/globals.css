@@ -209,6 +209,16 @@
   }
 }
 
+.pro-badge {
+  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
+  color: white;
+}
+
+.dark .pro-badge {
+  background-image: linear-gradient(to top, #9be15d 0%, #00e3ae 100%);
+  color: #09203f;
+}
+
 .container {
   margin: 0 auto;
   width: 100%;
