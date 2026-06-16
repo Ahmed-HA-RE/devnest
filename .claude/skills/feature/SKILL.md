@@ -10,9 +10,9 @@
 
 ## If `load` hint is provided, then make sure to follow the steps below:
 
-- Make sure the uploaded feature file is uploaded successfully, is accessible to you, and you can read it. If not, please ask to re-upload the file.
-- Make sure the feature file is in a valid **.md** format and is not corrupted and is not empty. If not, please ask to re-upload the file.
-- Once the feature file is successfully loaded, navigate to @/context/current-feature.md file and update the comments section with the following information:
+- Make sure either uploaded feature file is uploaded successfully, is accessible to you, and you can read it or a provided feature description is provided. If not, please ask to re-upload the file or provide a feature description.
+- If the feature file is provided, make sure the feature file is in a valid **.md** format and is not corrupted and is not empty. If not, please ask to re-upload the file.
+- Once the feature is successfully loaded, navigate to @/context/current-feature.md file and update the comments section with the following information:
   - **Feature Name**: [Name of the feature]
   - **Feature Description**: [Description of the feature]
   - **Feature Goals**: [Goals of the feature]
@@ -36,8 +36,8 @@
 
 ## If `complete` hint is provided, then make sure to follow the steps below:
 
-- Once the feature is completed and reviewed, navigate to @/context/current-feature.md file and update the status section with **Completed**. Make sure you can read the file first. If you cannot read the file, please ask me.
+- Once the feature is completed and reviewed, navigate to @/context/current-feature.md file and update the status section with **Completed** then clear comments sections then update the history section with the implemented feature. Make sure you can read the file first. If you cannot read the file, please ask me.
 - Make sure to merge the feature branch into the main branch and then checkout the main branch and delete the feature branch after the merge is successful. If there are any conflicts during the merge process, make sure to resolve them before merging.
 - After merging the feature branch into the main branch, push to the remote repository.
 
-**if no hint is provided infer that i must upload the feature file first then i run a hint like: `/feature/[hint]`**
+**if no hint is provided infer that i must upload the feature file first then i run a hint like: `/feature/[hint]`**. Or, if there are no feature file uploaded nor feature description provided, then ask to upload the feature file or provide a feature description first before running any hint.
