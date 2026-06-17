@@ -8,8 +8,6 @@
 
 <!-- Status -->
 
-Completed
-
 <!-- History -->
 
 - 2026-06-12: Implemented ShadCN UI init (Radix/Nova), tweakcn theme, react-icons swap, and `/dashboard` route with topbar, sidebar/main placeholders. Build passing.
@@ -20,3 +18,4 @@ Completed
 - 2026-06-15: Implemented Dashboard Items (Real Data) — `pinned-items.tsx` and `recent-items.tsx` now fetch directly from Prisma/Neon (pinned items for the current user, and the 10 most recently created items), replacing `lib/mock-data.ts`. Refactored `item-row.tsx` to a shared `ItemWithRelations` type (`Prisma.ItemGetPayload` with `type` and `tags.tag` includes), using `getIcon(item.type.name)` for the row icon and showing `FaThumbtack`/`FaStar` for pinned/favorite items. Build passes.
 - 2026-06-15: Implemented Stats & Sidebar (Real Data) — `stats-cards.tsx` is now an async server component fetching item/collection/favorite counts via `prisma.count` for the current user, replacing `lib/mock-data.ts`. `app-sidebar.tsx` became an async server component fetching system item types (with per-type item counts via a filtered `_count`), favorite collections, and all collections from Prisma. Item types are shown in a fixed order (Snippets, Commands, Notes, Files, Prompts, Images, Links) with pluralized labels and link to `/items/[typename]`. Extracted `sidebar-mobile-actions.tsx` and `sidebar-favorite-collection.tsx` as client components for the `useSidebar`-dependent bits (mobile quick actions, collapsed favorite icon/star). Added a "View all" link to the Collections sidebar group label row, navigating to `/collections`. Build passes.
 - 2026-06-16: Implemented PRO Badge on Sidebar Item Types — added a shadcn `Badge` component displaying "PRO" (all caps) next to the Images and Files item types in `app-sidebar.tsx`. Badge uses a custom `.pro-badge` CSS class in `globals.css` with a dark blue gradient (`#09203f` → `#537895`) in light mode and a green/teal gradient (`#9be15d` → `#00e3ae`) in dark mode. Badge is hidden when the sidebar is collapsed to icon mode. Build passes.
+- 2026-06-17: Implemented Dashboard Skeleton — wrapped each async server component in the `/dashboard` route with individual `<Suspense>` boundaries and matching skeleton fallbacks. Added `stats-cards-skeleton.tsx` (4-col grid of Card+Skeleton), `recent-collections-skeleton.tsx` (header row + 6 flat `h-32` card skeletons), `pinned-items-skeleton.tsx` (static Pinned heading + 4 item-row skeletons), `recent-items-skeleton.tsx` (static heading + 10 item-row skeletons), shared `item-row-skeleton.tsx` (mirrors `ItemRow` layout), and `app-sidebar-skeleton.tsx` (full Sidebar primitive with skeleton content). `AppSidebar` in `layout.tsx` also wrapped in `<Suspense>`. Build passes.
