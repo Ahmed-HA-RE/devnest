@@ -17,8 +17,10 @@ import {
 import { FaChevronRight } from 'react-icons/fa6';
 import { MdLogout } from 'react-icons/md';
 import { IoSettings } from 'react-icons/io5';
-import { currentUser } from '@/lib/mock-data';
 import Link from 'next/link';
+
+// Placeholder until auth is implemented.
+const currentUser = { name: 'John Doe', email: 'john@example.com', image: '/images/default-avatar.png' };
 
 const SidebarUserAvatar = () => {
   const initials = currentUser.name

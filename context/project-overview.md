@@ -37,7 +37,7 @@ Developers keep their essentials scattered across too many places:
 | Caching      | Redis (optional)                   |
 | File Storage | Cloudflare R2                      |
 | CSS / UI     | Tailwind CSS v4 + ShadCN           |
-| Auth         | NextAuth v5 (email + GitHub OAuth) |
+| Auth         | Better Auth (email + GitHub OAuth) |
 | AI           | OpenAI gpt-5-nano                  |
 | Deployment   | Vercel                             |
 | Monitoring   | Sentry (post-MVP)                  |

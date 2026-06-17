@@ -7,6 +7,6 @@ DevNest is a centralized developer workspace for storing commands, documentation
 Refer to these files for more context on DevNest:
 
 - @/context/project-overview.md
-- @/context/code-standards.md
+- @/context/coding-standards.md
 - @/context/ai-interaction.md
 - @/context/current-feature.md

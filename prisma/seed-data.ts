@@ -1,8 +1,4 @@
-// Seed data for the development database. See seed-spec.md for the source spec.
-
-import type { ItemType, Collection, Item } from '../lib/mock-data';
-
-export const itemTypes: ItemType[] = [
+export const itemTypes = [
   {
     id: 'type-snippet',
     name: 'snippet',
@@ -61,7 +57,7 @@ export const itemTypes: ItemType[] = [
   },
 ];
 
-export const collections: Collection[] = [
+export const collections = [
   {
     id: 'col-react-patterns',
     name: 'React Patterns',
@@ -109,7 +105,7 @@ export const collections: Collection[] = [
   },
 ];
 
-export const items: Item[] = [
+export const items = [
   // React Patterns
   {
     id: 'item-use-debounce',

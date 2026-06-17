@@ -2,8 +2,9 @@ import 'dotenv/config';
 import { randomUUID } from 'crypto';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from './generated/prisma/client';
-import { currentUser } from '../lib/mock-data';
 import { itemTypes, collections, items } from './seed-data';
+
+const currentUser = { id: 'user-1', name: 'John Doe', email: 'john@example.com', image: '/images/default-avatar.png', isPro: false };
 
 const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });

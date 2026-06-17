@@ -1,5 +1,5 @@
 import { IconType } from 'react-icons';
-import { FaTerminal, FaCode, FaStar } from 'react-icons/fa6';
+import { FaTerminal, FaCode } from 'react-icons/fa6';
 import {
   FaFileAlt,
   FaRegFolderOpen,
@@ -18,7 +18,6 @@ export const iconMap: Record<string, IconType> = {
   file: FaFileAlt,
   image: FaFileImage,
   link: LuLink,
-  star: FaStar,
 };
 
 export const getIcon = (name: string): IconType =>
