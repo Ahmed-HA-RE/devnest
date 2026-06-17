@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 import PinnedItems from './_components/pinned-items';
+import PinnedItemsSkeleton from './_components/pinned-items-skeleton';
 import RecentCollections from './_components/recent-collections';
+import RecentCollectionsSkeleton from './_components/recent-collections-skeleton';
 import RecentItems from './_components/recent-items';
+import RecentItemsSkeleton from './_components/recent-items-skeleton';
 import StatsCards from './_components/stats-cards';
+import StatsCardsSkeleton from './_components/stats-cards-skeleton';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -24,10 +29,18 @@ const DashboardPage = () => {
           Your developer knowledge hub
         </p>
       </div>
-      <StatsCards />
-      <RecentCollections />
-      <PinnedItems />
-      <RecentItems />
+      <Suspense fallback={<StatsCardsSkeleton />}>
+        <StatsCards />
+      </Suspense>
+      <Suspense fallback={<RecentCollectionsSkeleton />}>
+        <RecentCollections />
+      </Suspense>
+      <Suspense fallback={<PinnedItemsSkeleton />}>
+        <PinnedItems />
+      </Suspense>
+      <Suspense fallback={<RecentItemsSkeleton />}>
+        <RecentItems />
+      </Suspense>
     </div>
   );
 };
