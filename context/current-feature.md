@@ -2,20 +2,11 @@
 
 <!-- Feature name -->
 
-Dashboard Skeleton
-
 <!-- Feature Description -->
-
-Add a fallback skeleton UI when user navigates to `/dashboard` route.
 
 <!-- Goals -->
 
-- Wrap each server component that fetches from the database with `<Suspense>` and add a skeleton fallback
-- Make sure to match the exact layout structure while preserving layout shift
-
 <!-- Status -->
-
-Completed
 
 <!-- History -->
 
