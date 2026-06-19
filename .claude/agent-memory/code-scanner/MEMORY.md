@@ -1,0 +1,2 @@
+- [DevNest project stage & false-positive guardrails](project_devnest_stage.md) — pre-CRUD MVP, no auth/API routes/server actions yet; don't flag their absence
+- [Tooling note: no shell/glob tool available](feedback_no_shell_tool.md) — Read tool errors on directories; must discover files via known paths/imports, not directory listing
