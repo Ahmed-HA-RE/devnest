@@ -2,11 +2,23 @@
 
 <!-- Feature name -->
 
+Quick Wins
+
 <!-- Feature Description -->
+
+Address three low/medium-severity findings from the full codebase audit:
+
+1. Unbounded nested `items` include in `recent-collections.tsx` dashboard query — replace with grouped/count-based query instead of fetching every item row.
+2. Icon component invoked as a function instead of JSX in `item-row.tsx:21` — switch to `<Icon ... />` for consistency with other call sites.
+3. Stale comment in `icon-map.tsx:12` referencing removed `lib/mock-data.ts` — update to describe `ItemType.name` keys.
 
 <!-- Goals -->
 
+Fix all three issues with minimal, targeted changes; no behavior change to dashboard UI.
+
 <!-- Status -->
+
+Completed
 
 <!-- History -->
 
@@ -19,3 +31,4 @@
 - 2026-06-15: Implemented Stats & Sidebar (Real Data) — `stats-cards.tsx` is now an async server component fetching item/collection/favorite counts via `prisma.count` for the current user, replacing `lib/mock-data.ts`. `app-sidebar.tsx` became an async server component fetching system item types (with per-type item counts via a filtered `_count`), favorite collections, and all collections from Prisma. Item types are shown in a fixed order (Snippets, Commands, Notes, Files, Prompts, Images, Links) with pluralized labels and link to `/items/[typename]`. Extracted `sidebar-mobile-actions.tsx` and `sidebar-favorite-collection.tsx` as client components for the `useSidebar`-dependent bits (mobile quick actions, collapsed favorite icon/star). Added a "View all" link to the Collections sidebar group label row, navigating to `/collections`. Build passes.
 - 2026-06-16: Implemented PRO Badge on Sidebar Item Types — added a shadcn `Badge` component displaying "PRO" (all caps) next to the Images and Files item types in `app-sidebar.tsx`. Badge uses a custom `.pro-badge` CSS class in `globals.css` with a dark blue gradient (`#09203f` → `#537895`) in light mode and a green/teal gradient (`#9be15d` → `#00e3ae`) in dark mode. Badge is hidden when the sidebar is collapsed to icon mode. Build passes.
 - 2026-06-17: Implemented Dashboard Skeleton — wrapped each async server component in the `/dashboard` route with individual `<Suspense>` boundaries and matching skeleton fallbacks. Added `stats-cards-skeleton.tsx` (4-col grid of Card+Skeleton), `recent-collections-skeleton.tsx` (header row + 6 flat `h-32` card skeletons), `pinned-items-skeleton.tsx` (static Pinned heading + 4 item-row skeletons), `recent-items-skeleton.tsx` (static heading + 10 item-row skeletons), shared `item-row-skeleton.tsx` (mirrors `ItemRow` layout), and `app-sidebar-skeleton.tsx` (full Sidebar primitive with skeleton content). `AppSidebar` in `layout.tsx` also wrapped in `<Suspense>`. Build passes.
+- 2026-06-19: Implemented Quick Wins — addressed three findings from a full codebase audit. Replaced the unbounded `items` include in `recent-collections.tsx`'s dashboard query with `_count` for item totals and `prisma.item.groupBy` for per-type counts, avoiding fetching every item row per collection. Refactored `item-row.tsx`'s type icon rendering into a `renderTypeIcon` helper using proper JSX instead of invoking the icon component as a function. Updated a stale `icon-map.tsx` comment referencing removed mock data to describe `ItemType.name` keys. Build passes.

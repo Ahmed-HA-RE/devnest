@@ -7,35 +7,23 @@ import { CURRENT_USER_ID } from '@/lib/constants/app';
 import { getBorderColor, getTextColor } from '@/lib/colors';
 import { prisma } from '@/lib/db';
 import { cn } from '@/lib/utils';
-import { Prisma } from '@/prisma/generated/prisma/client';
 
 const RECENT_COLLECTIONS_COUNT = 6;
 
-type CollectionItem = Prisma.ItemGetPayload<{
-  select: {
-    type: { select: { id: true; name: true; color: true } };
-  };
-}>;
+type CollectionType = { id: string; name: string; color: string | null };
+type CollectionTypeCount = { type: CollectionType; count: number };
 
 // Returns the distinct item types in a collection and the most-used one.
-const getCollectionTypeInfo = (items: CollectionItem[]) => {
-  const typeCounts = new Map<string, number>();
-  const types: CollectionItem['type'][] = [];
+const getCollectionTypeInfo = (typeCounts: CollectionTypeCount[]) => {
+  const types = typeCounts.map(({ type }) => type);
 
-  for (const { type } of items) {
-    typeCounts.set(type.id, (typeCounts.get(type.id) ?? 0) + 1);
-
-    if (!types.some((t) => t.id === type.id)) {
-      types.push(type);
+  let primaryType: CollectionType | null = null;
+  let primaryCount = 0;
+  for (const { type, count } of typeCounts) {
+    if (!primaryType || count > primaryCount) {
+      primaryType = type;
+      primaryCount = count;
     }
-  }
-
-  let primaryType: CollectionItem['type'] | null = null;
-  for (const type of types) {
-    const isMoreUsed =
-      !primaryType ||
-      (typeCounts.get(type.id) ?? 0) > (typeCounts.get(primaryType.id) ?? 0);
-    if (isMoreUsed) primaryType = type;
   }
 
   return { types, primaryType };
@@ -47,19 +35,34 @@ const RecentCollections = async () => {
     orderBy: { createdAt: 'desc' },
     take: RECENT_COLLECTIONS_COUNT,
     include: {
-      items: {
-        include: {
-          type: {
-            select: {
-              id: true,
-              name: true,
-              color: true,
-            },
-          },
-        },
-      },
+      _count: { select: { items: true } },
     },
   });
+
+  const collectionIds = collections.map((collection) => collection.id);
+
+  const itemTypeCounts = await prisma.item.groupBy({
+    by: ['collectionId', 'typeId'],
+    where: { collectionId: { in: collectionIds } },
+    _count: { _all: true },
+  });
+
+  const types = await prisma.itemType.findMany({
+    where: { id: { in: [...new Set(itemTypeCounts.map((row) => row.typeId))] } },
+    select: { id: true, name: true, color: true },
+  });
+  const typeById = new Map(types.map((type) => [type.id, type]));
+
+  const typeCountsByCollection = new Map<string, CollectionTypeCount[]>();
+  for (const row of itemTypeCounts) {
+    if (!row.collectionId) continue;
+    const type = typeById.get(row.typeId);
+    if (!type) continue;
+
+    const entries = typeCountsByCollection.get(row.collectionId) ?? [];
+    entries.push({ type, count: row._count._all });
+    typeCountsByCollection.set(row.collectionId, entries);
+  }
 
   return (
     <section>
@@ -77,7 +80,7 @@ const RecentCollections = async () => {
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {collections.map((collection) => {
           const { types, primaryType } = getCollectionTypeInfo(
-            collection.items,
+            typeCountsByCollection.get(collection.id) ?? [],
           );
 
           const { className: borderClassName, style: borderStyle } =
@@ -100,8 +103,8 @@ const RecentCollections = async () => {
               </CardHeader>
               <CardContent>
                 <p className='text-sm text-muted-foreground'>
-                  {collection.items.length}{' '}
-                  {collection.items.length === 1 ? 'item' : 'items'}
+                  {collection._count.items}{' '}
+                  {collection._count.items === 1 ? 'item' : 'items'}
                 </p>
                 {collection.description && (
                   <p className='mt-1 text-sm text-muted-foreground'>

@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
 import { FaStar, FaThumbtack } from 'react-icons/fa6';
-
 import { getIcon } from '@/components/icon-map';
 import { Badge } from '@/components/ui/badge';
 import { Prisma } from '@/prisma/generated/prisma/client';
@@ -12,13 +11,18 @@ export type ItemWithRelations = Prisma.ItemGetPayload<{
   };
 }>;
 
-const ItemRow = ({ item }: { item: ItemWithRelations }) => {
+const renderTypeIcon = (item: ItemWithRelations) => {
   const Icon = getIcon(item.type.name);
+  return (
+    <Icon className='size-4' style={{ color: item.type.color ?? undefined }} />
+  );
+};
 
+const ItemRow = ({ item }: { item: ItemWithRelations }) => {
   return (
     <div className='flex items-center gap-3 border-b px-4 py-3 last:border-b-0'>
       <div className='flex size-8 shrink-0 items-center justify-center rounded-md bg-muted'>
-        {Icon({ className: 'size-4', style: { color: item.type.color ?? undefined } })}
+        {renderTypeIcon(item)}
       </div>
       <div className='min-w-0 flex-1'>
         <div className='flex items-center gap-2'>
