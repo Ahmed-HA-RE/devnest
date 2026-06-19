@@ -9,7 +9,7 @@ import {
 import { IoSparkles } from 'react-icons/io5';
 import { LuLink } from 'react-icons/lu';
 
-// Maps the icon name stored in mock data to its react-icons component.
+// Maps an ItemType.name value to its react-icons component.
 export const iconMap: Record<string, IconType> = {
   snippet: FaCode,
   prompt: IoSparkles,
