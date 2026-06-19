@@ -2,23 +2,11 @@
 
 <!-- Feature name -->
 
-Quick Wins
-
 <!-- Feature Description -->
-
-Address three low/medium-severity findings from the full codebase audit:
-
-1. Unbounded nested `items` include in `recent-collections.tsx` dashboard query — replace with grouped/count-based query instead of fetching every item row.
-2. Icon component invoked as a function instead of JSX in `item-row.tsx:21` — switch to `<Icon ... />` for consistency with other call sites.
-3. Stale comment in `icon-map.tsx:12` referencing removed `lib/mock-data.ts` — update to describe `ItemType.name` keys.
 
 <!-- Goals -->
 
-Fix all three issues with minimal, targeted changes; no behavior change to dashboard UI.
-
 <!-- Status -->
-
-Completed
 
 <!-- History -->
 
