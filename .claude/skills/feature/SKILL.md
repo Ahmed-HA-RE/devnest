@@ -36,8 +36,8 @@
 
 ## If `complete` hint is provided, then make sure to follow the steps below:
 
-- Once the feature is completed and reviewed, navigate to @/context/current-feature.md file and update the status section with **Completed** then clear comments sections then update the history section with the implemented feature. Make sure you can read the file first. If you cannot read the file, please ask me.
+- Once the feature is completed and reviewed, navigate to @/context/current-feature.md file and update the status section with **Completed** then update the history section with the implemented feature. Make sure you can read the file first. If you cannot read the file, please ask me.
 - Make sure to merge the feature branch into the main branch and then checkout the main branch and delete the feature branch after the merge is successful. If there are any conflicts during the merge process, make sure to resolve them before merging.
-- After merging the feature branch into the main branch, push to the remote repository.
+- After merging the feature branch into the main branch, push to the remote repository and clean `@/context/current-feature.md` file to remove the feature information.
 
 **if no hint is provided infer that i must upload the feature file first then i run a hint like: `/feature/[hint]`**. Or, if there are no feature file uploaded nor feature description provided, then ask to upload the feature file or provide a feature description first before running any hint.
