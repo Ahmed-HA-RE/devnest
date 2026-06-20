@@ -20,6 +20,6 @@ Refer to these files for more context on DevNest:
 - NEVER run any SQL or Neon tool call against the `production` branch (id `br-red-morning-a23myedb`) unless the user explicitly types "production" in their current message. A prior approval does not carry over to later requests.
 - Treat this as a standing default for all Neon MCP tool calls (`run_sql`, `get_database_tables`, `describe_branch`, etc.) in this repo — do not ask which branch to use; assume `development`.
 
-### Context7
+### shadcn && shadcn-studio-mcp
 
-Always use **Context7** MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
+- For any shadcn or shadcn-studio-mcp mcp always use pnpm dlx to run the tool, never npm or yarn.
