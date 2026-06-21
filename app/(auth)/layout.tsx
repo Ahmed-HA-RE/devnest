@@ -16,8 +16,8 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className='flex min-h-screen justify-center py-6'>
-      <div className='grid min-h-full w-full max-w-[80%] overflow-hidden rounded-4xl bg-muted/70 p-4 shadow-xl backdrop-blur-sm lg:grid-cols-2'>
+    <div className='flex min-h-screen justify-center py-14'>
+      <div className='grid w-full max-w-[95%] self-center overflow-hidden rounded-4xl bg-muted/70 p-4 max-xl:py-6 shadow-xl backdrop-blur-sm lg:self-stretch lg:grid-cols-2'>
         <div className='relative hidden overflow-hidden rounded-3xl lg:block'>
           <div className='absolute inset-x-6 top-6 z-10 flex items-center justify-between'>
             <Image
@@ -44,7 +44,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
           <AuthCarousel />
         </div>
 
-        <div className='flex flex-col items-center justify-center lg:p-12'>
+        <div className='flex flex-col items-center justify-center lg:p-8'>
           {/* Auth forms render here — implemented in the next feature */}
           <div className='w-full lg:max-w-xl'>{children}</div>
         </div>

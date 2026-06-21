@@ -2,22 +2,12 @@
 
 <!-- Feature name -->
 
-Authentication Layout
-
 <!-- Feature Description -->
-
-A shared layout for all auth pages (sign-in, sign-up, forgot-password, reset-password). Left side is static and shared across all auth pages (logo, home link, 2-slide carousel using ShadCN Studio `carousel-08` with `auth-layout.svg`), hidden on mobile/tablet. Right side is a placeholder for auth forms, to be implemented in the next feature.
 
 <!-- Goals -->
 
-- Create an auth route group at `app/(auth)/` for clean URLs (`/sign-in` not `/auth/sign-in`)
-- Shared static left side: `devnest-logo.svg`, `Link` back to home, and a 2-slide carousel using `auth-layout.svg` with DevNest-relevant titles
-- Right side placeholder with a comment marking where auth forms go
-- Left side hidden on mobile/tablet (`hidden lg:flex`), right side shown on all screens
-
 <!-- Status -->
 
-Completed
 
 <!-- History -->
 
@@ -32,3 +22,4 @@ Completed
 - 2026-06-17: Implemented Dashboard Skeleton — wrapped each async server component in the `/dashboard` route with individual `<Suspense>` boundaries and matching skeleton fallbacks. Added `stats-cards-skeleton.tsx` (4-col grid of Card+Skeleton), `recent-collections-skeleton.tsx` (header row + 6 flat `h-32` card skeletons), `pinned-items-skeleton.tsx` (static Pinned heading + 4 item-row skeletons), `recent-items-skeleton.tsx` (static heading + 10 item-row skeletons), shared `item-row-skeleton.tsx` (mirrors `ItemRow` layout), and `app-sidebar-skeleton.tsx` (full Sidebar primitive with skeleton content). `AppSidebar` in `layout.tsx` also wrapped in `<Suspense>`. Build passes.
 - 2026-06-19: Implemented Quick Wins — addressed three findings from a full codebase audit. Replaced the unbounded `items` include in `recent-collections.tsx`'s dashboard query with `_count` for item totals and `prisma.item.groupBy` for per-type counts, avoiding fetching every item row per collection. Refactored `item-row.tsx`'s type icon rendering into a `renderTypeIcon` helper using proper JSX instead of invoking the icon component as a function. Updated a stale `icon-map.tsx` comment referencing removed mock data to describe `ItemType.name` keys. Build passes.
 - 2026-06-20: Implemented Authentication Layout — added an `app/(auth)/` route group (`/sign-in`, `/sign-up`) with a shared server-component layout that redirects already-authenticated users to `/` via `auth.api.getSession`. Left side is a rounded, image-filled panel (hidden below `lg`) with the DevNest logo, a `Badge`-wrapped "Back to home" link, and a 2-slide auto-playing/looping carousel (installed from ShadCN Studio's `carousel-08`, customized into `app/(auth)/_components/auth-carousel.tsx`) showing `auth-layout.svg` with DevNest-relevant captions and stretched dot indicators. Right side is a centered placeholder with a comment marking where auth forms will go. Fixed the installed `components/ui/carousel.tsx` primitive: replaced a dangling import to a nonexistent icon-placeholder component with `react-icons/fa6` icons, and made its content wrapper forward `h-full`/`w-full` so the carousel fills its container. Added the `@ss-components`/`@ss-themes`/`@ss-blocks` ShadCN Studio registries to `components.json`. Build passes.
+- 2026-06-21: Implemented Sign Up — added `schema/auth.ts` with the zod `authSchema` (userName/email/password/confirmPassword + password-match `refine`) and an exported `AuthSchema` type. Built `SignUpForm` (`app/(auth)/sign-up/_components/sign-up-form.tsx`) with `react-hook-form` + `zodResolver`, using `Controller` per field with shadcn `Field`/`FieldLabel`/`FieldError`, asterisked required labels, and a `Spinner`/"Create Account" ternary on the submit button (`min-w-32`). Wired the submit handler to `authClient.signUp.email` with `sonner` toasts for success/error. Added shared `components/shared/password-input.tsx` (`InputGroup` + `FaEye`/`RiEyeCloseLine` visibility toggle) and `components/shared/auth-providers.tsx` (GitHub/Google OAuth button UI, logic deferred) for reuse on `/sign-in`. `SignUpPage` now reads `callbackURL` from `searchParams` and passes it to the form, which links to `/sign-in?callbackURL=...`. Installed shadcn `field`, `input-group`, `spinner`, `label`, `textarea` primitives — fixed a dangling `IconPlaceholder` import in the generated `spinner.tsx` by swapping to `react-icons/fa6`'s `FaSpinner` — and added a `sonner` `Toaster` to the root layout. Tuned the `(auth)` layout's responsive sizing (content-fit height on mobile/tablet via `self-start`/`lg:self-stretch`, reduced `lg:p-8` gap between the carousel and form columns) and bumped the global `Button` size scale and `Input` focus-ring width. Enabled `requireEmailVerification`/`minPasswordLength` on the better-auth config — no email-sending provider is configured yet, so verification emails won't actually send until that's wired up. Build passes.

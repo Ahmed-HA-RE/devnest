@@ -4,6 +4,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import Providers from '@/components/providers/providers';
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/constants/app';
+import { Toaster } from '@/components/ui/sonner';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -62,6 +63,7 @@ export default function RootLayout({
     >
       <body className='min-h-full flex flex-col'>
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );

@@ -50,7 +50,7 @@ const AuthCarousel = () => {
               priority
             />
 
-            <div className='absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent' />
+            <div className='absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 to-transparent' />
 
             <div className='absolute inset-x-8 bottom-10 flex flex-col items-center gap-10 text-white'>
               <h3 className='text-4xl max-w-sm text-center leading-snug'>
