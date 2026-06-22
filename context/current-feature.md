@@ -2,24 +2,11 @@
 
 <!-- Feature name -->
 
-Sign In
-
 <!-- Feature Description -->
-
-Implementing sign in form UI and logic with zod validation, react-hook-form, and the shadcn Field component, reusing shared auth components (auth-providers, password-input) from the sign-up feature.
 
 <!-- Goals -->
 
-- Add `signInSchema` (and exported type via `z.input`) to `schema/auth.ts`, reusing `authSchema.shape.email`/`password` plus a `rememberMe` boolean defaulting to false.
-- Build `SignInForm` with `react-hook-form` + zod resolver, destructuring `handleSubmit`/`isSubmitting: isPending`, using shadcn `Field`/`FieldLabel` (asterisked required labels) and the shared `PasswordInput`/`auth-providers` components.
-- `SignInPage` reads `callbackURL` from `searchParams` and passes it to `SignInForm`.
-- Title "Welcome Back", subtitle "Don't have an account?" + `Join ${APP_NAME}` linking to `/sign-up?callbackURL={callbackURL}`.
-- Submit button uses shadcn `Spinner`/"Sign In" ternary with `min-w-32`; `onSubmit` handler stubbed (sign-in logic implemented separately by the user).
-- Add a "Remember Me" checkbox field.
-
 <!-- Status -->
-
-Completed
 
 
 <!-- History -->
