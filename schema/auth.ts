@@ -20,3 +20,11 @@ export const authSchema = z
   });
 
 export type AuthSchema = z.infer<typeof authSchema>;
+
+export const signInSchema = z.object({
+  email: authSchema.shape.email,
+  password: authSchema.shape.password,
+  rememberMe: z.boolean().default(false),
+});
+
+export type SignInSchema = z.input<typeof signInSchema>;

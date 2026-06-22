@@ -2,11 +2,24 @@
 
 <!-- Feature name -->
 
+Sign In
+
 <!-- Feature Description -->
+
+Implementing sign in form UI and logic with zod validation, react-hook-form, and the shadcn Field component, reusing shared auth components (auth-providers, password-input) from the sign-up feature.
 
 <!-- Goals -->
 
+- Add `signInSchema` (and exported type via `z.input`) to `schema/auth.ts`, reusing `authSchema.shape.email`/`password` plus a `rememberMe` boolean defaulting to false.
+- Build `SignInForm` with `react-hook-form` + zod resolver, destructuring `handleSubmit`/`isSubmitting: isPending`, using shadcn `Field`/`FieldLabel` (asterisked required labels) and the shared `PasswordInput`/`auth-providers` components.
+- `SignInPage` reads `callbackURL` from `searchParams` and passes it to `SignInForm`.
+- Title "Welcome Back", subtitle "Don't have an account?" + `Join ${APP_NAME}` linking to `/sign-up?callbackURL={callbackURL}`.
+- Submit button uses shadcn `Spinner`/"Sign In" ternary with `min-w-32`; `onSubmit` handler stubbed (sign-in logic implemented separately by the user).
+- Add a "Remember Me" checkbox field.
+
 <!-- Status -->
+
+Completed
 
 
 <!-- History -->
@@ -23,3 +36,4 @@
 - 2026-06-19: Implemented Quick Wins — addressed three findings from a full codebase audit. Replaced the unbounded `items` include in `recent-collections.tsx`'s dashboard query with `_count` for item totals and `prisma.item.groupBy` for per-type counts, avoiding fetching every item row per collection. Refactored `item-row.tsx`'s type icon rendering into a `renderTypeIcon` helper using proper JSX instead of invoking the icon component as a function. Updated a stale `icon-map.tsx` comment referencing removed mock data to describe `ItemType.name` keys. Build passes.
 - 2026-06-20: Implemented Authentication Layout — added an `app/(auth)/` route group (`/sign-in`, `/sign-up`) with a shared server-component layout that redirects already-authenticated users to `/` via `auth.api.getSession`. Left side is a rounded, image-filled panel (hidden below `lg`) with the DevNest logo, a `Badge`-wrapped "Back to home" link, and a 2-slide auto-playing/looping carousel (installed from ShadCN Studio's `carousel-08`, customized into `app/(auth)/_components/auth-carousel.tsx`) showing `auth-layout.svg` with DevNest-relevant captions and stretched dot indicators. Right side is a centered placeholder with a comment marking where auth forms will go. Fixed the installed `components/ui/carousel.tsx` primitive: replaced a dangling import to a nonexistent icon-placeholder component with `react-icons/fa6` icons, and made its content wrapper forward `h-full`/`w-full` so the carousel fills its container. Added the `@ss-components`/`@ss-themes`/`@ss-blocks` ShadCN Studio registries to `components.json`. Build passes.
 - 2026-06-21: Implemented Sign Up — added `schema/auth.ts` with the zod `authSchema` (userName/email/password/confirmPassword + password-match `refine`) and an exported `AuthSchema` type. Built `SignUpForm` (`app/(auth)/sign-up/_components/sign-up-form.tsx`) with `react-hook-form` + `zodResolver`, using `Controller` per field with shadcn `Field`/`FieldLabel`/`FieldError`, asterisked required labels, and a `Spinner`/"Create Account" ternary on the submit button (`min-w-32`). Wired the submit handler to `authClient.signUp.email` with `sonner` toasts for success/error. Added shared `components/shared/password-input.tsx` (`InputGroup` + `FaEye`/`RiEyeCloseLine` visibility toggle) and `components/shared/auth-providers.tsx` (GitHub/Google OAuth button UI, logic deferred) for reuse on `/sign-in`. `SignUpPage` now reads `callbackURL` from `searchParams` and passes it to the form, which links to `/sign-in?callbackURL=...`. Installed shadcn `field`, `input-group`, `spinner`, `label`, `textarea` primitives — fixed a dangling `IconPlaceholder` import in the generated `spinner.tsx` by swapping to `react-icons/fa6`'s `FaSpinner` — and added a `sonner` `Toaster` to the root layout. Tuned the `(auth)` layout's responsive sizing (content-fit height on mobile/tablet via `self-start`/`lg:self-stretch`, reduced `lg:p-8` gap between the carousel and form columns) and bumped the global `Button` size scale and `Input` focus-ring width. Enabled `requireEmailVerification`/`minPasswordLength` on the better-auth config — no email-sending provider is configured yet, so verification emails won't actually send until that's wired up. Build passes.
+- 2026-06-22: Implemented Sign In — added `signInSchema`/`SignInSchema` (`z.input`) to `schema/auth.ts`, reusing `authSchema.shape.email`/`password` plus a `rememberMe` boolean. Built `SignInForm` (`app/(auth)/sign-in/_components/sign-in-form.tsx`) with `react-hook-form` + `zodResolver`, `Controller`-driven `Field`/`FieldLabel`/`FieldError` fields (asterisked required labels), the shared `PasswordInput` and `AuthProviders` components, a `Spinner`/"Sign In" ternary submit button (`min-w-32`), and a "Remember Me" `Checkbox` field. Wired `onSubmit` to `authClient.signIn.email` with a `sonner` error toast. `SignInPage` reads `callbackURL` from `searchParams`, redirects authenticated users, and passes it to the form (title "Welcome Back", link to `/sign-up?callbackURL=...`). Installed the shadcn `checkbox` primitive — fixed its dangling `IconPlaceholder` import by swapping to `react-icons/fa6`'s `FaCheck` (same pattern as prior `spinner`/`carousel` fixes). Fixed the Remember Me `Field`'s horizontal-orientation variant stretching `FieldLabel` to `flex-auto` (which made the whole row's blank space clickable) by overriding with `*:data-[slot=field-label]:flex-none`. Verified end-to-end with Playwright: validation errors, password visibility toggle, checkbox toggle/hit-area, and a failed sign-in correctly surfacing an "Invalid email or password" toast. Build passes.
