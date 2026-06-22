@@ -56,7 +56,7 @@ Example v4 configuration:
 ## Naming
 
 - Components: PascalCase (`ItemCard.tsx`)
-- Always use the arrow function syntax for components (e.g. `const ItemCard: React.FC<ItemCardProps> = () => { ... }`)
+- Always use the arrow function syntax for components, typing the props parameter directly — never `React.FC<Props>` (e.g. `const ItemCard = ({ title }: ItemCardProps) => { ... }`)
 - Files: kebab-case (`item-card.tsx`)
 - Functions: camelCase
 - Constants: SCREAMING_SNAKE_CASE

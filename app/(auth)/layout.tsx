@@ -17,7 +17,20 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className='flex min-h-screen justify-center py-14'>
-      <div className='grid w-full max-w-[95%] self-center overflow-hidden rounded-4xl bg-muted/70 p-4 max-xl:py-6 shadow-xl backdrop-blur-sm lg:self-stretch lg:grid-cols-2'>
+      <div className='relative grid w-full max-w-[95%] self-center overflow-hidden rounded-4xl bg-background p-4 max-xl:py-6 shadow-xl backdrop-blur-sm lg:self-stretch lg:grid-cols-2'>
+        <div
+          aria-hidden
+          className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,var(--border)_1px,transparent_0)] bg-[size:28px_28px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]'
+        />
+        <div
+          aria-hidden
+          className='pointer-events-none absolute -top-40 -right-40 size-96 rounded-full bg-primary/15 blur-3xl dark:bg-primary/25'
+        />
+        <div
+          aria-hidden
+          className='pointer-events-none absolute -bottom-40 -left-40 size-96 rounded-full bg-chart-3/10 blur-3xl dark:bg-chart-3/20'
+        />
+
         <div className='relative hidden overflow-hidden rounded-3xl lg:block'>
           <div className='absolute inset-x-6 top-6 z-10 flex items-center justify-between'>
             <Image

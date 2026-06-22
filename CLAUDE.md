@@ -23,3 +23,7 @@ Refer to these files for more context on DevNest:
 ### shadcn && shadcn-studio-mcp
 
 - For any shadcn or shadcn-studio-mcp mcp always use pnpm dlx to run the tool, never npm or yarn.
+
+### Playwright
+
+- After using Playwright MCP to evaluate the UI, delete the `./playwright-mcp` folder immediately after the screenshots have been reviewed — do not keep it

@@ -11,17 +11,15 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 
-interface PasswordInputProps
-  extends Omit<React.ComponentProps<'input'>, 'type'> {
+interface PasswordInputProps extends Omit<
+  React.ComponentProps<'input'>,
+  'type'
+> {
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = ({
-  value,
-  onChange,
-  ...props
-}) => {
+const PasswordInput = ({ value, onChange, ...props }: PasswordInputProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   return (

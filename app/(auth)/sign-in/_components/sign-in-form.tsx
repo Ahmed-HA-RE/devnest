@@ -26,7 +26,7 @@ interface SignInFormProps {
   callbackURL: string;
 }
 
-const SignInForm: React.FC<SignInFormProps> = ({ callbackURL }) => {
+const SignInForm = ({ callbackURL }: SignInFormProps) => {
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -108,9 +108,17 @@ const SignInForm: React.FC<SignInFormProps> = ({ callbackURL }) => {
             control={control}
             render={({ field, fieldState }) => (
               <Field>
-                <FieldLabel htmlFor='sign-in-password'>
-                  Password <span className='text-destructive'>*</span>
-                </FieldLabel>
+                <span className='flex items-center justify-between'>
+                  <FieldLabel htmlFor='sign-in-password'>
+                    Password <span className='text-destructive'>*</span>
+                  </FieldLabel>
+                  <Link
+                    href='/forgot-password'
+                    className='text-xs text-primary hover:underline'
+                  >
+                    Forgot Password?
+                  </Link>
+                </span>
                 <PasswordInput
                   id='sign-in-password'
                   value={field.value}
@@ -156,7 +164,7 @@ const SignInForm: React.FC<SignInFormProps> = ({ callbackURL }) => {
 
           <FieldSeparator className='my-0.5'>Or continue with</FieldSeparator>
 
-          <AuthProviders />
+          <AuthProviders callbackURL={callbackURL} />
         </FieldGroup>
       </form>
     </div>

@@ -25,7 +25,7 @@ interface SignUpFormProps {
   callbackURL: string;
 }
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ callbackURL }) => {
+const SignUpForm = ({ callbackURL }: SignUpFormProps) => {
   const form = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -178,7 +178,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ callbackURL }) => {
 
           <FieldSeparator className='my-0.5'>Or continue with</FieldSeparator>
 
-          <AuthProviders />
+          <AuthProviders callbackURL={callbackURL} />
         </FieldGroup>
       </form>
     </div>
