@@ -2,26 +2,12 @@
 
 <!-- Feature name -->
 
-Email Verification
-
 <!-- Feature Description -->
-
-Implement email verification by sending an OTP to the user's email address. Refactors sign-up to redirect to a new `verify-email` route (with the user's email encrypted in the URL), adds a shared OTP input component with a resend-code timer placeholder, an `emailVerificationSchema`, and a Resend + react-email integration (`lib/resend.ts`, `emails/`, `send-emails/`) to actually send the verification email. The OTP submit handler itself is implemented separately by the user.
 
 <!-- Goals -->
 
-- Sign-up success navigates (via `useRouter()`) to `/verify-email` after a success toast, passing the encrypted email as a URL param
-- New `app/(auth)/verify-email` route with proper metadata, matching the sign-in/sign-up title+subtitle structure with verification-specific copy
-- Shared, reusable OTP component in `components/shared` (dynamic via `value`/`onChange` props), built from the ShadCN Studio `input-otp-04` block, with a working countdown timer and a placeholder resend-code handler
-- `emailVerificationSchema` added to `schema/auth.ts` per the provided shape
-- `lib/resend.ts` configured with a Resend client instance using the API key from env
-- `emails/` (react-email templates) and `send-emails/` (Resend send functions) folders set up, with `emails/verify-email.tsx` adapted from the react-email Studio/activation template (social icons left as placeholders)
-- Verify-email page includes a `<Button asChild>`-wrapped `<Link>` back to sign-in
-- No OTP verification submit handler — left as a placeholder for the user to implement
-
 <!-- Status -->
 
-Completed
 
 
 <!-- History -->
