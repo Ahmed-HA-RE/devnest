@@ -28,3 +28,12 @@ export const signInSchema = z.object({
 });
 
 export type SignInSchema = z.input<typeof signInSchema>;
+
+export const emailVerificationSchema = z.object({
+  otp: z
+    .string({ error: 'Invalid OTP' })
+    .min(6, 'Please enter the OTP that was sent to your email')
+    .max(6, 'OTP code must not exceed 6 characters'),
+});
+
+export type EmailVerificationSchema = z.infer<typeof emailVerificationSchema>;

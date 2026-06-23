@@ -3,6 +3,8 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from './db';
 import { createAuthMiddleware } from 'better-auth/api';
 import { APP_NAME } from './constants/app';
+import { emailOTP } from 'better-auth/plugins';
+import { sendVerificationEmail } from '@/send-emails/send-verification-email';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -40,4 +42,17 @@ export const auth = betterAuth({
       prompt: 'select_account',
     },
   },
+  plugins: [
+    emailOTP({
+      allowedAttempts: 6,
+      otpLength: 6,
+      expiresIn: 10 * 60, // 10 minutes
+      overrideDefaultEmailVerification: true,
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type === 'email-verification') {
+          void sendVerificationEmail({ email, otp });
+        }
+      },
+    }),
+  ],
 });

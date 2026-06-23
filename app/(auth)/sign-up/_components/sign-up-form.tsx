@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -26,6 +27,7 @@ interface SignUpFormProps {
 }
 
 const SignUpForm = ({ callbackURL }: SignUpFormProps) => {
+  const router = useRouter();
   const form = useForm<AuthSchema>({
     resolver: zodResolver(authSchema),
     defaultValues: {
@@ -55,8 +57,12 @@ const SignUpForm = ({ callbackURL }: SignUpFormProps) => {
       if (error) {
         throw new Error(error.message);
       }
-      toast.success('Account created! Please check your email to verify it.');
       reset();
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      await authClient.emailOtp.sendVerificationOtp({
+        email,
+        type: 'email-verification',
+      });
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

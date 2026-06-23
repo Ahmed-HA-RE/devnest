@@ -21,12 +21,14 @@ import { signInSchema, type SignInSchema } from '@/schema/auth';
 import { APP_NAME } from '@/lib/constants/app';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface SignInFormProps {
   callbackURL: string;
 }
 
 const SignInForm = ({ callbackURL }: SignInFormProps) => {
+  const router = useRouter();
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -46,16 +48,37 @@ const SignInForm = ({ callbackURL }: SignInFormProps) => {
   const onSubmit = async (data: SignInSchema) => {
     try {
       const { email, password, rememberMe } = data;
-      const { error } = await authClient.signIn.email({
-        email,
-        password,
-        rememberMe,
-      });
+      const { error } = await authClient.signIn.email(
+        {
+          email,
+          password,
+          rememberMe,
+        },
+        {
+          onError: async (context) => {
+            if (
+              context.error.code === 'EMAIL_NOT_VERIFIED' &&
+              context.error.status === 403
+            ) {
+              await authClient.emailOtp.sendVerificationOtp({
+                email,
+                type: 'email-verification',
+              });
+              router.push('/verify-email?email=' + encodeURIComponent(email));
+            } else {
+              throw new Error(context.error.message);
+            }
+          },
+        },
+      );
 
       if (error) {
-        throw new Error(error.message);
+        return;
       }
+
       reset();
+      toast.success('Signed in successfully');
+      router.push(callbackURL);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
