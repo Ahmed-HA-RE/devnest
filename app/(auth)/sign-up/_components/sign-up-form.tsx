@@ -59,10 +59,6 @@ const SignUpForm = ({ callbackURL }: SignUpFormProps) => {
       }
       reset();
       router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-      await authClient.emailOtp.sendVerificationOtp({
-        email,
-        type: 'email-verification',
-      });
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
