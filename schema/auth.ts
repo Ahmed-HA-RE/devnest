@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+export const otpSchema = z
+  .string({ error: 'Invalid OTP' })
+  .min(6, 'Please enter the OTP that was sent to your email')
+  .max(6, 'OTP code must not exceed 6 characters');
+
 export const authSchema = z
   .object({
     userName: z
@@ -30,10 +35,7 @@ export const signInSchema = z.object({
 export type SignInSchema = z.input<typeof signInSchema>;
 
 export const emailVerificationSchema = z.object({
-  otp: z
-    .string({ error: 'Invalid OTP' })
-    .min(6, 'Please enter the OTP that was sent to your email')
-    .max(6, 'OTP code must not exceed 6 characters'),
+  otp: otpSchema,
 });
 
 export type EmailVerificationSchema = z.infer<typeof emailVerificationSchema>;
@@ -43,3 +45,15 @@ export const forgotPasswordSchema = z.object({
 });
 
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: authSchema.shape.password,
+    confirmPassword: authSchema.shape.password,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
