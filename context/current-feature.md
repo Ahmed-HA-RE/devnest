@@ -2,23 +2,11 @@
 
 <!-- Feature name -->
 
-Forgot Password
-
 <!-- Feature Description -->
-
-Implement forgot password by letting the user enter their email and an OTP code will be sent to their email to reset their password.
 
 <!-- Goals -->
 
-- Create `app/(auth)/forgot-password/page.tsx` with SEO metadata and a session check that redirects to `/dashboard` if already authenticated
-- Create a client component `forgot-password-form.tsx` rendering a title, subtitle, and email input (react-hook-form + zod, `forgotPasswordSchema`/`ForgotPasswordSchema` reusing `auth.shape.email`)
-- Dynamic submit button (`<Spinner/>` or "Send Code"), `onSubmit` left as a `console.log` placeholder
-- Add `emails/reset-password.tsx` template (same structure as `emails/verify-email.tsx`, content adapted for password reset) and a `send-emails` function to send it
-- Wire the new send function into `sendVerificationOTP` in `lib/auth.ts` via an added forgot-password `else if` branch
-
 <!-- Status -->
-
-Completed
 
 
 
