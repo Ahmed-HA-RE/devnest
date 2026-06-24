@@ -2,24 +2,11 @@
 
 <!-- Feature name -->
 
-Reset Password
-
 <!-- Feature Description -->
-
-Implement reset password by entering the OTP sent via the user's email so they can reset their current password and update it to a new one.
 
 <!-- Goals -->
 
-- Create `app/(auth)/reset-password/page.tsx` with SEO metadata and no session check (the currently logged-in user will be redirected here for the OTP flow)
-- Create a client component `reset-password-form.tsx` with two forms: an OTP form (shared `otp-input.tsx`, reusing `otpSchema`) and a new-password form (`resetPasswordSchema`/`ResetPasswordSchema`, added to `schema/auth.ts`, with `password`/`confirmPassword` matching via `refine`)
-- Use react-hook-form + zod for both forms
-- Dynamic submit buttons: OTP form renders `<Spinner/>` or "Verify Code"; password form renders `<Spinner/>` or "Reset Password"
-- Track an `isOtpSuccess` state to switch from the OTP form to the new-password form once OTP verification succeeds (state to be flipped by the developer when OTP verification logic is wired up)
-- Leave both `onSubmit` handlers as `console.log` placeholders, with a `useRouter()` set up to redirect after a 200 response once the developer wires up the reset logic
-
 <!-- Status -->
-
-Completed
 
 
 
