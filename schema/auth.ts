@@ -37,3 +37,9 @@ export const emailVerificationSchema = z.object({
 });
 
 export type EmailVerificationSchema = z.infer<typeof emailVerificationSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: authSchema.shape.email,
+});
+
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;

@@ -57,8 +57,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
           <AuthCarousel />
         </div>
 
-        <div className='flex flex-col items-center justify-center lg:p-8'>
-          {/* Auth forms render here — implemented in the next feature */}
+        <div className='flex flex-col items-center justify-center lg:p-8 z-20'>
           <div className='w-full lg:max-w-xl'>{children}</div>
         </div>
       </div>

@@ -12,7 +12,7 @@ export const sendVerificationEmail = async ({
   otp,
 }: SendVerificationEmailParams) => {
   return resend.emails.send({
-    from: `${APP_NAME} <verify@${process.env.RESEND_DOMAIN}>`,
+    from: `${APP_NAME} <support@${process.env.RESEND_DOMAIN}>`,
     to: email,
     subject: `${otp} is your ${APP_NAME} verification code`,
     react: VerifyEmail({ otp }),

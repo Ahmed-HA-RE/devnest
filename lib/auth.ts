@@ -5,6 +5,7 @@ import { createAuthMiddleware } from 'better-auth/api';
 import { APP_NAME } from './constants/app';
 import { emailOTP } from 'better-auth/plugins';
 import { sendVerificationEmail } from '@/send-emails/send-verification-email';
+import { sendResetPasswordEmail } from '@/send-emails/send-reset-password-email';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -51,6 +52,8 @@ export const auth = betterAuth({
       async sendVerificationOTP({ email, otp, type }) {
         if (type === 'email-verification') {
           void sendVerificationEmail({ email, otp });
+        } else if (type === 'forget-password') {
+          void sendResetPasswordEmail({ email, otp });
         }
       },
     }),
