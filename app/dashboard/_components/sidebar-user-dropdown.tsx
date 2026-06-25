@@ -16,11 +16,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { FaChevronRight } from 'react-icons/fa6';
 import { MdLogout } from 'react-icons/md';
-import { IoSettings } from 'react-icons/io5';
 import Link from 'next/link';
+import { LuUser } from 'react-icons/lu';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 // Placeholder until auth is implemented.
-const currentUser = { name: 'John Doe', email: 'john@example.com', image: '/images/default-avatar.png' };
+const currentUser = {
+  name: 'John Doe',
+  email: 'john@example.com',
+  image: '/images/default-avatar.png',
+};
 
 const SidebarUserAvatar = () => {
   const initials = currentUser.name
@@ -48,6 +54,17 @@ const SidebarUserAvatar = () => {
 
 const SidebarUserDropdown = () => {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push('/');
+        },
+      },
+    });
+  };
 
   return (
     <SidebarMenu>
@@ -75,14 +92,14 @@ const SidebarUserDropdown = () => {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href='/dashboard/settings'>
-                  <IoSettings />
-                  Settings
+                <Link href='/profile'>
+                  <LuUser />
+                  Profile
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant='destructive'>
+            <DropdownMenuItem variant='destructive' onClick={handleLogout}>
               <MdLogout />
               Log out
             </DropdownMenuItem>
