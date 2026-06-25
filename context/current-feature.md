@@ -2,21 +2,13 @@
 
 <!-- Feature name -->
 
-Dashboard Real User Data
-
 <!-- Feature Description -->
-
-Refactor the dashboard so all data is fetched for the actual logged-in user, derived from the session cookie, instead of the `CURRENT_USER_ID` placeholder constant.
 
 <!-- Goals -->
 
-- Replace the `CURRENT_USER_ID` placeholder (`lib/constants/app.ts`) wherever it's used across dashboard data-fetching code (stats cards, sidebar, recent/pinned items, recent collections, etc.).
-- Derive the current user from the session via `auth.api.getSession` (reading the request cookie), consistent with the existing `/dashboard` session guard.
-- Ensure every dashboard query scopes correctly to the logged-in user's id with no regressions to existing functionality.
-
 <!-- Status -->
 
-Completed
+
 
 <!-- History -->
 
