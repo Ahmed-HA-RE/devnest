@@ -2,20 +2,11 @@
 
 <!-- Feature name -->
 
-Logout User
-
 <!-- Feature Description -->
-
-Implement logging the user out flow by clicking on the logout button from their dashboard sidebar and then he will get redirected to the homepage.
 
 <!-- Goals -->
 
-- Use `authClient.signOut()` and pass an object with an `onSuccess` callback that redirects the user back to the homepage.
-- Reference: https://better-auth.com/docs/authentication/email-password#sign-out
-
 <!-- Status -->
-
-Completed
 
 <!-- History -->
 
