@@ -23,7 +23,7 @@ const SignInPage = async ({ searchParams }: SignInPageProps) => {
     return redirect('/dashboard');
   }
 
-  const { callbackURL = '/' } = await searchParams;
+  const { callbackURL = '/dashboard' } = await searchParams;
 
   return <SignInForm callbackURL={callbackURL} />;
 };

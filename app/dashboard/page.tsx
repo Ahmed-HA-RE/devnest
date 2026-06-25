@@ -9,6 +9,9 @@ import RecentItems from './_components/recent-items';
 import RecentItemsSkeleton from './_components/recent-items-skeleton';
 import StatsCards from './_components/stats-cards';
 import StatsCardsSkeleton from './_components/stats-cards-skeleton';
+import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -20,7 +23,15 @@ export const metadata: Metadata = {
   },
 };
 
-const DashboardPage = () => {
+const DashboardPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return redirect('/sign-in');
+  }
+
   return (
     <div className='flex flex-col gap-6'>
       <div>
