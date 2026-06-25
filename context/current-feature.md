@@ -2,11 +2,21 @@
 
 <!-- Feature name -->
 
+Dashboard Real User Data
+
 <!-- Feature Description -->
+
+Refactor the dashboard so all data is fetched for the actual logged-in user, derived from the session cookie, instead of the `CURRENT_USER_ID` placeholder constant.
 
 <!-- Goals -->
 
+- Replace the `CURRENT_USER_ID` placeholder (`lib/constants/app.ts`) wherever it's used across dashboard data-fetching code (stats cards, sidebar, recent/pinned items, recent collections, etc.).
+- Derive the current user from the session via `auth.api.getSession` (reading the request cookie), consistent with the existing `/dashboard` session guard.
+- Ensure every dashboard query scopes correctly to the logged-in user's id with no regressions to existing functionality.
+
 <!-- Status -->
+
+Completed
 
 <!-- History -->
 
@@ -28,3 +38,4 @@
 - 2026-06-24: Implemented Forgot Password — added `forgotPasswordSchema`/`ForgotPasswordSchema` to `schema/auth.ts` (reusing `authSchema.shape.email`). Added the `app/(auth)/forgot-password` route (metadata, session redirect to `/dashboard`) with a `ForgotPasswordForm` matching the sign-in/up title+subtitle structure, wired to `authClient.emailOtp.requestPasswordReset` with a `Spinner`/"Send Code" submit button and a "Back to Sign In" link, redirecting to `/reset-password?email=...` on success (that route is not yet built — next feature). Added `emails/reset-password.tsx`, a react-email OTP template mirroring `verify-email.tsx`'s structure with reset-password copy, and `send-emails/send-reset-password-email.ts` to send it via Resend. Wired a `forget-password` branch into `sendVerificationOTP` in `lib/auth.ts`. Unified both verification and reset emails to send `from` a single `support@` address (previously `verify@`/`reset@`) and added `z-20` to the `(auth)` layout's form-side wrapper to fix the carousel overlapping form content. Build, `tsc --noEmit`, and `eslint` clean.
 - 2026-06-24: Implemented Reset Password — extracted `otpSchema` out of `emailVerificationSchema` in `schema/auth.ts` to share it, and added `resetPasswordSchema`/`ResetPasswordSchema` (`password`/`confirmPassword` matching via `refine`). Added the `app/(auth)/reset-password` route (metadata, no session check, redirects to `/forgot-password` if the `email` query param is missing) rendering `ResetPasswordForm`, which shows an OTP step first (shared `otp-input.tsx`, `Spinner`/"Verify Code" button, resend wired to `authClient.emailOtp.sendVerificationOtp`) and, once `authClient.emailOtp.checkVerificationOtp` succeeds, switches to a `NewPasswordForm` (password/confirmPassword via `PasswordInput`, `Spinner`/"Reset Password" button) wired to `authClient.emailOtp.resetPassword`, redirecting to `/sign-in` on success. Fixed a real bug found via Playwright (verified end-to-end using a real OTP fetched from the Neon `verification` table, only reproducible going through the actual `isOtpSuccess` state transition, not by hardcoding the initial state to `true`): typing in the "New password" field didn't register, because both conditional branches returned the same `<div>`/`<form>` shape with no `key`, so React patched the DOM in place and reused a stale OTP-slot input node for the new password field. Fixed by extracting `NewPasswordForm` into its own module-scope component (in the same file) so the OTP→password transition is a genuine element-type change, which forces React to remount instead of reuse. Ran a code-scanner audit which flagged (and we reverted) a stray `allowedAttempts: 1` left in `lib/auth.ts`'s `emailOTP` config from local testing — restored to `6`. Build, `tsc --noEmit`, and `eslint` clean.
 - 2026-06-25: Implemented Logout — wired the sidebar's "Log out" `DropdownMenuItem` in `sidebar-user-dropdown.tsx` to `authClient.signOut()`, redirecting to `/` via a `fetchOptions.onSuccess` callback (`router.push`). Also guarded `/dashboard` with a session check (`auth.api.getSession`, redirecting to `/sign-in` if absent) and changed the sign-in page's default `callbackURL` from `/` to `/dashboard`. Build, `tsc --noEmit`, and `eslint` clean.
+- 2026-06-25: Implemented Dashboard Real User Data — replaced the `CURRENT_USER_ID` placeholder (`lib/constants/app.ts`) across all dashboard data-fetching with the real logged-in user's id. `dashboard/page.tsx` now fetches the session once via `auth.api.getSession` and passes `userId` as a prop to `StatsCards`, `RecentCollections`, `PinnedItems`, and `RecentItems`; `app-sidebar.tsx` (rendered from the layout, outside the page) fetches its own session the same way and passes the real `name`/`email`/`image` to `SidebarUserDropdown`, replacing its hardcoded "John Doe" mock user. Also added dashboard empty states: a new shared `components/shared/empty-state.tsx` (built on the newly-installed shadcn `Empty` primitive) now renders an icon + message instead of blank/disappearing content for Pinned Items (previously returned `null` when empty), Recent Items, and Recent Collections when a user has none yet — left the sidebar Collections list as-is (no empty state) by choice. `tsc --noEmit` and `eslint` clean.

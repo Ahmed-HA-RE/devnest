@@ -1,21 +1,20 @@
 import { FiFolder, FiHeart, FiPackage, FiStar } from 'react-icons/fi';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { CURRENT_USER_ID } from '@/lib/constants/app';
 import { getTextColor } from '@/lib/colors';
 import { prisma } from '@/lib/db';
 import { cn } from '@/lib/utils';
 
-const StatsCards = async () => {
+const StatsCards = async ({ userId }: { userId: string }) => {
   const [itemCount, collectionCount, favoriteItemCount, favoriteCollectionCount] =
     await Promise.all([
-      prisma.item.count({ where: { userId: CURRENT_USER_ID } }),
-      prisma.collection.count({ where: { userId: CURRENT_USER_ID } }),
+      prisma.item.count({ where: { userId } }),
+      prisma.collection.count({ where: { userId } }),
       prisma.item.count({
-        where: { userId: CURRENT_USER_ID, isFavorite: true },
+        where: { userId, isFavorite: true },
       }),
       prisma.collection.count({
-        where: { userId: CURRENT_USER_ID, isFavorite: true },
+        where: { userId, isFavorite: true },
       }),
     ]);
 
