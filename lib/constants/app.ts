@@ -4,8 +4,5 @@ export const APP_DESCRIPTION =
 export const APP_URL =
   process.env.NEXT_PUBLIC_PROD_URL || 'http://localhost:3000';
 
-// Placeholder until auth is implemented; matches the seeded dev user.
-export const CURRENT_USER_ID = 'user-1';
-
 // OAUTH PROVIDERS
 export const OAUTH_PROVIDERS = ['github', 'google'];

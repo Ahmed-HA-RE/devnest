@@ -21,15 +21,14 @@ import { LuUser } from 'react-icons/lu';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
-// Placeholder until auth is implemented.
-const currentUser = {
-  name: 'John Doe',
-  email: 'john@example.com',
-  image: '/images/default-avatar.png',
+type SidebarUserDropdownProps = {
+  name: string;
+  email: string;
+  image?: string | null;
 };
 
-const SidebarUserAvatar = () => {
-  const initials = currentUser.name
+const SidebarUserAvatar = ({ name, email, image }: SidebarUserDropdownProps) => {
+  const initials = name
     .split(' ')
     .map((part) => part[0])
     .join('')
@@ -37,22 +36,24 @@ const SidebarUserAvatar = () => {
   return (
     <>
       <Avatar>
-        <AvatarImage src={currentUser.image} alt={currentUser.name} />
+        <AvatarImage src={image ?? undefined} alt={name} />
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
       <div className='grid flex-1 text-left text-sm leading-tight'>
-        <span className='truncate font-medium text-foreground'>
-          {currentUser.name}
-        </span>
+        <span className='truncate font-medium text-foreground'>{name}</span>
         <span className='text-muted-foreground truncate text-xs'>
-          {currentUser.email}
+          {email}
         </span>
       </div>
     </>
   );
 };
 
-const SidebarUserDropdown = () => {
+const SidebarUserDropdown = ({
+  name,
+  email,
+  image,
+}: SidebarUserDropdownProps) => {
   const { isMobile } = useSidebar();
   const router = useRouter();
 
@@ -75,7 +76,7 @@ const SidebarUserDropdown = () => {
               size='lg'
               className='data-open:bg-sidebar-accent cursor-pointer hover:text-none'
             >
-              <SidebarUserAvatar />
+              <SidebarUserAvatar name={name} email={email} image={image} />
               <FaChevronRight className='ml-auto !size-3 transition-transform duration-200 max-lg:rotate-270 [[data-state=open]>&]:rotate-90 lg:[[data-state=open]>&]:-rotate-180' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -86,7 +87,7 @@ const SidebarUserDropdown = () => {
             sideOffset={isMobile ? 8 : 16}
           >
             <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
-              <SidebarUserAvatar />
+              <SidebarUserAvatar name={name} email={email} image={image} />
             </div>
 
             <DropdownMenuSeparator />

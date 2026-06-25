@@ -3,7 +3,7 @@ import { FaRegFolderOpen, FaStar } from 'react-icons/fa6';
 
 import { getIcon } from '@/components/icon-map';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { CURRENT_USER_ID } from '@/lib/constants/app';
+import EmptyState from '@/components/shared/empty-state';
 import { getBorderColor, getTextColor } from '@/lib/colors';
 import { prisma } from '@/lib/db';
 import { cn } from '@/lib/utils';
@@ -29,9 +29,9 @@ const getCollectionTypeInfo = (typeCounts: CollectionTypeCount[]) => {
   return { types, primaryType };
 };
 
-const RecentCollections = async () => {
+const RecentCollections = async ({ userId }: { userId: string }) => {
   const collections = await prisma.collection.findMany({
-    where: { userId: CURRENT_USER_ID },
+    where: { userId },
     orderBy: { createdAt: 'desc' },
     take: RECENT_COLLECTIONS_COUNT,
     include: {
@@ -77,65 +77,73 @@ const RecentCollections = async () => {
           View all
         </Link>
       </div>
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        {collections.map((collection) => {
-          const { types, primaryType } = getCollectionTypeInfo(
-            typeCountsByCollection.get(collection.id) ?? [],
-          );
+      {collections.length === 0 ? (
+        <EmptyState
+          icon={FaRegFolderOpen}
+          title='No collections yet'
+          description='Create a collection to start organizing your items.'
+        />
+      ) : (
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {collections.map((collection) => {
+            const { types, primaryType } = getCollectionTypeInfo(
+              typeCountsByCollection.get(collection.id) ?? [],
+            );
 
-          const { className: borderClassName, style: borderStyle } =
-            getBorderColor(primaryType?.color ?? undefined);
+            const { className: borderClassName, style: borderStyle } =
+              getBorderColor(primaryType?.color ?? undefined);
 
-          return (
-            <Card
-              key={collection.id}
-              className={cn('border-l-4', borderClassName)}
-              style={borderStyle}
-            >
-              <CardHeader className='flex-row items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <FaRegFolderOpen />
-                  <span className='font-medium'>{collection.name}</span>
-                  {collection.isFavorite && (
-                    <FaStar className='size-3 text-yellow-500' />
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className='text-sm text-muted-foreground'>
-                  {collection._count.items}{' '}
-                  {collection._count.items === 1 ? 'item' : 'items'}
-                </p>
-                {collection.description && (
-                  <p className='mt-1 text-sm text-muted-foreground'>
-                    {collection.description}
-                  </p>
-                )}
-                {types.length > 0 && (
-                  <div className='mt-3 flex gap-2'>
-                    {types.map((type) => {
-                      const TypeIcon = getIcon(type.name);
-                      const { className, style } = getTextColor(
-                        type.color ?? undefined,
-                      );
-                      return (
-                        <TypeIcon
-                          key={type.id}
-                          className={cn(
-                            'size-4 text-muted-foreground',
-                            className,
-                          )}
-                          style={style}
-                        />
-                      );
-                    })}
+            return (
+              <Card
+                key={collection.id}
+                className={cn('border-l-4', borderClassName)}
+                style={borderStyle}
+              >
+                <CardHeader className='flex-row items-center justify-between'>
+                  <div className='flex items-center gap-2'>
+                    <FaRegFolderOpen />
+                    <span className='font-medium'>{collection.name}</span>
+                    {collection.isFavorite && (
+                      <FaStar className='size-3 text-yellow-500' />
+                    )}
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                </CardHeader>
+                <CardContent>
+                  <p className='text-sm text-muted-foreground'>
+                    {collection._count.items}{' '}
+                    {collection._count.items === 1 ? 'item' : 'items'}
+                  </p>
+                  {collection.description && (
+                    <p className='mt-1 text-sm text-muted-foreground'>
+                      {collection.description}
+                    </p>
+                  )}
+                  {types.length > 0 && (
+                    <div className='mt-3 flex gap-2'>
+                      {types.map((type) => {
+                        const TypeIcon = getIcon(type.name);
+                        const { className, style } = getTextColor(
+                          type.color ?? undefined,
+                        );
+                        return (
+                          <TypeIcon
+                            key={type.id}
+                            className={cn(
+                              'size-4 text-muted-foreground',
+                              className,
+                            )}
+                            style={style}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };

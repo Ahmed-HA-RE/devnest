@@ -32,6 +32,8 @@ const DashboardPage = async () => {
     return redirect('/sign-in');
   }
 
+  const userId = session.user.id;
+
   return (
     <div className='flex flex-col gap-6'>
       <div>
@@ -41,16 +43,16 @@ const DashboardPage = async () => {
         </p>
       </div>
       <Suspense fallback={<StatsCardsSkeleton />}>
-        <StatsCards />
+        <StatsCards userId={userId} />
       </Suspense>
       <Suspense fallback={<RecentCollectionsSkeleton />}>
-        <RecentCollections />
+        <RecentCollections userId={userId} />
       </Suspense>
       <Suspense fallback={<PinnedItemsSkeleton />}>
-        <PinnedItems />
+        <PinnedItems userId={userId} />
       </Suspense>
       <Suspense fallback={<RecentItemsSkeleton />}>
-        <RecentItems />
+        <RecentItems userId={userId} />
       </Suspense>
     </div>
   );

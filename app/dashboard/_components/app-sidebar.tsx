@@ -1,3 +1,5 @@
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaRegFolderOpen } from 'react-icons/fa6';
@@ -16,7 +18,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { CURRENT_USER_ID } from '@/lib/constants/app';
+import { auth } from '@/lib/auth';
 import { getTextColor } from '@/lib/colors';
 import { prisma } from '@/lib/db';
 import SidebarFavoriteCollection from './sidebar-favorite-collection';
@@ -37,19 +39,29 @@ const ITEM_TYPE_ORDER = [
 ];
 
 const AppSidebar = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return redirect('/sign-in');
+  }
+
+  const userId = session.user.id;
+
   const [itemTypes, favoriteCollections, collections] = await Promise.all([
     prisma.itemType.findMany({
       where: { isSystem: true },
       include: {
-        _count: { select: { items: { where: { userId: CURRENT_USER_ID } } } },
+        _count: { select: { items: { where: { userId } } } },
       },
     }),
     prisma.collection.findMany({
-      where: { userId: CURRENT_USER_ID, isFavorite: true },
+      where: { userId, isFavorite: true },
       orderBy: { createdAt: 'desc' },
     }),
     prisma.collection.findMany({
-      where: { userId: CURRENT_USER_ID },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
       include: { _count: { select: { items: true } } },
     }),
@@ -175,7 +187,11 @@ const AppSidebar = async () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUserDropdown />
+        <SidebarUserDropdown
+          name={session.user.name}
+          email={session.user.email}
+          image={session.user.image}
+        />
       </SidebarFooter>
     </Sidebar>
   );
