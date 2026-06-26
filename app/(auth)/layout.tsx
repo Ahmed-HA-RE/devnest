@@ -1,20 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { FaArrowRightLong } from 'react-icons/fa6';
 
 import { Badge } from '@/components/ui/badge';
-import { auth } from '@/lib/auth';
 import AuthCarousel from './_components/auth-carousel';
 
 const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (session) {
-    redirect('/');
-  }
-
   return (
     <div className='flex min-h-screen justify-center py-14'>
       <div className='relative grid w-full max-w-[95%] self-center overflow-hidden rounded-4xl bg-background p-4 max-xl:py-6 shadow-xl backdrop-blur-sm lg:self-stretch lg:grid-cols-2'>

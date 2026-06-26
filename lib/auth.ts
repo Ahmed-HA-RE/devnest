@@ -6,6 +6,7 @@ import { APP_NAME } from './constants/app';
 import { emailOTP } from 'better-auth/plugins';
 import { sendVerificationEmail } from '@/send-emails/send-verification-email';
 import { sendResetPasswordEmail } from '@/send-emails/send-reset-password-email';
+import { sendDeleteAccountEmail } from '@/send-emails/send-delete-account-email';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,6 +14,15 @@ export const auth = betterAuth({
   }),
 
   appName: APP_NAME,
+
+  user: {
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async ({ user, url }) => {
+        void sendDeleteAccountEmail({ email: user.email, name: user.name, url });
+      },
+    },
+  },
 
   hooks: {
     after: createAuthMiddleware(async (ctx) => {

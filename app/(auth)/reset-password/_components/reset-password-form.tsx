@@ -33,9 +33,14 @@ type OtpFormSchema = z.infer<typeof otpFormSchema>;
 interface NewPasswordFormProps {
   email: string;
   otp: string;
+  isUserLoggedIn: boolean;
 }
 
-const NewPasswordForm = ({ email, otp }: NewPasswordFormProps) => {
+const NewPasswordForm = ({
+  email,
+  otp,
+  isUserLoggedIn,
+}: NewPasswordFormProps) => {
   const router = useRouter();
 
   const passwordForm = useForm<ResetPasswordSchema>({
@@ -58,7 +63,11 @@ const NewPasswordForm = ({ email, otp }: NewPasswordFormProps) => {
         {
           onSuccess: () => {
             toast.success('Password reset successfully');
-            router.push('/sign-in');
+            if (isUserLoggedIn) {
+              router.push('/dashboard');
+            } else {
+              router.push('/sign-in');
+            }
           },
           onError: (context) => {
             throw new Error(
@@ -144,7 +153,13 @@ const NewPasswordForm = ({ email, otp }: NewPasswordFormProps) => {
   );
 };
 
-const ResetPasswordForm = ({ email }: { email: string }) => {
+const ResetPasswordForm = ({
+  email,
+  isUserLoggedIn,
+}: {
+  email: string;
+  isUserLoggedIn: boolean;
+}) => {
   const [isOtpSuccess, setIsOtpSuccess] = useState(false);
   const [otp, setOtp] = useState('');
 
@@ -253,7 +268,9 @@ const ResetPasswordForm = ({ email }: { email: string }) => {
     );
   }
 
-  return <NewPasswordForm email={email} otp={otp} />;
+  return (
+    <NewPasswordForm email={email} otp={otp} isUserLoggedIn={isUserLoggedIn} />
+  );
 };
 
 export default ResetPasswordForm;

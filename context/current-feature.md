@@ -2,12 +2,22 @@
 
 <!-- Feature name -->
 
+User Profile
+
 <!-- Feature Description -->
+
+Implement a user profile page at `/profile`, reachable via the profile button, with two cards: an account management card (change password, change username, delete account) and a stats card (totals for items, collections, snippets, etc.).
 
 <!-- Goals -->
 
+- Account management card: change password (current/new/confirm if a `credential` providerId exists on the account table, otherwise set password + confirm), change username via a dialog (`authClient.updateUser`), and delete account via a destructive confirmation dialog (`DELETE`-to-confirm input, triggers `authClient.deleteUser`, sends confirmation email, shows a "confirmation email sent" toast).
+- Enable `deleteUser` in `@/lib/auth.ts`, add a static list of deletion consequences in `@/lib/constants`, and build a delete-confirmation email template (react-email) reusing that list, per the better-auth user/account docs.
+- Stats card: display the user's totals (snippets, collections, etc.).
+- Add `setUserPassSchema`/`changeUserPassSchema` (zod) to `@/schema/user.ts` per the provided schema.
+
 <!-- Status -->
 
+Completed
 
 
 <!-- History -->

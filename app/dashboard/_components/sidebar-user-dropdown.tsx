@@ -93,7 +93,7 @@ const SidebarUserDropdown = ({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href='/profile'>
+                <Link href='/dashboard/profile'>
                   <LuUser />
                   Profile
                 </Link>
