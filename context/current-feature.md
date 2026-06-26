@@ -2,24 +2,10 @@
 
 <!-- Feature name -->
 
-Rate Limiting
-
 <!-- Feature Description -->
-
-Implement rate limiting using Upstash (`@upstash/ratelimit` + `@upstash/redis`) so that auth-related routes are protected from API abuse by controlling the number of requests a user can make within a specific time frame. Requests are identified by IP address (via `next-request-ip`) and, for some routes, by email address as well. A reusable `rateLimit()` helper lives in `lib/rate-limit.ts` and is applied at the top of each protected route handler, returning a structured error (`{ error: "Too many requests. Please try again in a few seconds." }`) when the limit is exceeded.
 
 <!-- Goals -->
 
-- Install and configure `@upstash/ratelimit`, `@upstash/redis`, and `next-request-ip`.
-- Create and initialize the rate limiter in `lib/rate-limit.ts`, with a reusable `rateLimit()` helper.
-- Protect the following routes with the specified identifier, request count, and window:
-  - `/sign-up/email` — ip address — 5 requests / 10s
-  - `/sign-in/email` — ip address + email address — 5 requests / 10s
-  - `/email-otp/request-password-reset` — ip address + email address — 10 requests / 5s
-  - `/email-otp/check-verification-otp` — ip address — 5 requests / 5s
-  - `/email-otp/request-password-reset` — ip address — 10 requests / 10s
-  - `/email-otp/send-verification-otp` — ip address — 5 requests / 5s
-- Return a structured, human-readable error on rate-limit rejection.
 
 <!-- Status -->
 
