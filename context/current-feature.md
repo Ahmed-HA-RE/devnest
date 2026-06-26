@@ -2,11 +2,28 @@
 
 <!-- Feature name -->
 
+Rate Limiting
+
 <!-- Feature Description -->
+
+Implement rate limiting using Upstash (`@upstash/ratelimit` + `@upstash/redis`) so that auth-related routes are protected from API abuse by controlling the number of requests a user can make within a specific time frame. Requests are identified by IP address (via `next-request-ip`) and, for some routes, by email address as well. A reusable `rateLimit()` helper lives in `lib/rate-limit.ts` and is applied at the top of each protected route handler, returning a structured error (`{ error: "Too many requests. Please try again in a few seconds." }`) when the limit is exceeded.
 
 <!-- Goals -->
 
+- Install and configure `@upstash/ratelimit`, `@upstash/redis`, and `next-request-ip`.
+- Create and initialize the rate limiter in `lib/rate-limit.ts`, with a reusable `rateLimit()` helper.
+- Protect the following routes with the specified identifier, request count, and window:
+  - `/sign-up/email` — ip address — 5 requests / 10s
+  - `/sign-in/email` — ip address + email address — 5 requests / 10s
+  - `/email-otp/request-password-reset` — ip address + email address — 10 requests / 5s
+  - `/email-otp/check-verification-otp` — ip address — 5 requests / 5s
+  - `/email-otp/request-password-reset` — ip address — 10 requests / 10s
+  - `/email-otp/send-verification-otp` — ip address — 5 requests / 5s
+- Return a structured, human-readable error on rate-limit rejection.
+
 <!-- Status -->
+
+Completed
 
 <!-- History -->
 
@@ -30,3 +47,4 @@
 - 2026-06-25: Implemented Logout — wired the sidebar's "Log out" `DropdownMenuItem` in `sidebar-user-dropdown.tsx` to `authClient.signOut()`, redirecting to `/` via a `fetchOptions.onSuccess` callback (`router.push`). Also guarded `/dashboard` with a session check (`auth.api.getSession`, redirecting to `/sign-in` if absent) and changed the sign-in page's default `callbackURL` from `/` to `/dashboard`. Build, `tsc --noEmit`, and `eslint` clean.
 - 2026-06-25: Implemented Dashboard Real User Data — replaced the `CURRENT_USER_ID` placeholder (`lib/constants/app.ts`) across all dashboard data-fetching with the real logged-in user's id. `dashboard/page.tsx` now fetches the session once via `auth.api.getSession` and passes `userId` as a prop to `StatsCards`, `RecentCollections`, `PinnedItems`, and `RecentItems`; `app-sidebar.tsx` (rendered from the layout, outside the page) fetches its own session the same way and passes the real `name`/`email`/`image` to `SidebarUserDropdown`, replacing its hardcoded "John Doe" mock user. Also added dashboard empty states: a new shared `components/shared/empty-state.tsx` (built on the newly-installed shadcn `Empty` primitive) now renders an icon + message instead of blank/disappearing content for Pinned Items (previously returned `null` when empty), Recent Items, and Recent Collections when a user has none yet — left the sidebar Collections list as-is (no empty state) by choice. `tsc --noEmit` and `eslint` clean.
 - 2026-06-26: Implemented User Profile — added `/dashboard/profile` with an `AccountCard` (change username via a dialog wired to `authClient.updateUser`; change/set password via a `ChangePasswordDialog` that branches on whether the user has a `credential` row in the `account` table — `authClient.changePassword` when they do, otherwise a server-only `auth.api.setPassword` action via a new `lib/actions/user.ts`; delete account via a `DeleteAccountDialog` requiring the user to type `DELETE` before calling `authClient.deleteUser`) and a `ProfileStatsCard` (per-item-type, collection, and tag counts, mirroring the sidebar's `_count` query pattern). Enabled `deleteUser` in `lib/auth.ts` with a `sendDeleteAccountVerification` callback wired to a new `emails/delete-account.tsx` template + `send-emails/send-delete-account-email.ts`, both reusing a new `DELETE_ACCOUNT_CONSEQUENCES` constant (`lib/constants/app.ts`). Added `schema/user.ts` (`setUserPassSchema`, `changeUserPassSchema`, `updateUsernameSchema`). Installed the shadcn `dialog` primitive, fixing its dangling `IconPlaceholder` import (swapped to `react-icons/fa6`'s `FaXmark`, same recurring pattern as prior shadcn installs). The change-password dialog's "Forgot password?" action calls `authClient.emailOtp.requestPasswordReset` directly and redirects to `/reset-password?email=...`; this required removing the `(auth)` layout's redundant logged-in-redirect (every page in that group already guards itself) so a logged-in user can actually reach `/reset-password`, and adding an `isUserLoggedIn` flag so `NewPasswordForm` redirects to `/dashboard` instead of `/sign-in` after a successful reset. Sidebar "Profile" link updated to `/dashboard/profile`. Build, `tsc --noEmit`, and `eslint` clean.
+- 2026-06-26: Implemented Rate Limiting — added `lib/rate-limit.ts` with a Redis-backed (`Redis.fromEnv()`) reusable `rateLimit()` helper that lazily caches one `@upstash/ratelimit` `Ratelimit` (sliding-window) instance per `(prefix, requests, window)` combo, plus an `AUTH_RATE_LIMITS` config map keyed by better-auth's actual action paths. Wired it into `app/api/auth/[...all]/route.ts` by wrapping `toNextJsHandler(auth)`'s `POST` export: before delegating to the real handler, it resolves the request's better-auth sub-path, looks up a matching limit, derives an identifier via `next-request-ip`'s `getClientIp` (and, for `/sign-in/email`, the request body's `email`, read via `request.clone().json()` so the real handler can still consume the original body), and short-circuits with `{ message: "Too many requests..." }` + HTTP 429 on rejection — that `message` key (not `error`) is required for better-auth's client to surface `error.message` in the existing sign-up/sign-in/forgot-password/reset-password forms' toasts. Protected `/sign-up/email` (ip, 5/10s), `/sign-in/email` (ip+email, 5/10s), `/email-otp/request-password-reset` (ip, 10/10s), `/email-otp/check-verification-otp` (ip, 5/5s), and `/email-otp/send-verification-otp` (ip, 5/5s). Added `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` to `.env.example`. Also fixed an unrelated `DialogDescription`-less `Dialog` a11y warning in `change-password-dialog.tsx`, and a few stale doc references in `context/` (npm→pnpm, a stray `.ts-action` typo, NextAuth→Better Auth). `tsc --noEmit` and `eslint` clean.

@@ -49,7 +49,7 @@ Example v4 configuration:
 
 - Components: If a component is only used within a specific route, place it in a route-scoped `_components` folder inside that route. If it is reused across multiple routes, place it in the global `@/components` directory.
 - Pages: `@/app/[route]/page.tsx`
-- Server Actions: `@/lib/actions/[feature].ts-action`
+- Server Actions: `@/lib/actions/[feature].ts`
 - Types: `@/types/[feature].ts`
 - Lib/Utils: `@/lib/[utility].ts`
 

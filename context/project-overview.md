@@ -60,7 +60,7 @@ Full-text search across content, tags, titles, and item types.
 
 ### Authentication
 
-Email + Password and GitHub OAuth via NextAuth v5.
+Email + Password and GitHub OAuth via Better Auth.
 
 ### Item Features
 

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -284,6 +285,7 @@ const ChangePasswordDialog = ({
           <DialogTitle className='text-xl'>
             {hasPassword ? 'Change Password' : 'Set Password'}
           </DialogTitle>
+          <DialogDescription className='hidden' />
         </DialogHeader>
         {hasPassword ? (
           <ChangePasswordForm onSuccess={() => setOpen(false)} email={email} />
