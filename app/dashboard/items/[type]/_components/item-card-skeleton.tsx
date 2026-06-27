@@ -11,7 +11,6 @@ const ItemCardSkeleton = () => (
       <Skeleton className='size-3 rounded-full' />
     </CardHeader>
     <CardContent className='space-y-3'>
-      <Skeleton className='h-4 w-full' />
       <div className='flex gap-1'>
         <Skeleton className='h-5 w-14 rounded-full' />
         <Skeleton className='h-5 w-14 rounded-full' />

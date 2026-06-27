@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getIcon } from '@/components/icon-map';
 import EmptyState from '@/components/shared/empty-state';
 import { prisma } from '@/lib/db';
-import ItemCard from './item-card';
+import ItemsGridClient from './items-grid-client';
 
 const ItemsGrid = async ({
   userId,
@@ -23,9 +23,14 @@ const ItemsGrid = async ({
   const items = await prisma.item.findMany({
     where: { userId, typeId: itemType.id },
     orderBy: { createdAt: 'desc' },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      isPinned: true,
+      isFavorite: true,
+      createdAt: true,
       type: { select: { name: true, color: true } },
-      tags: { include: { tag: { select: { name: true } } } },
+      tags: { select: { tag: { select: { name: true } } } },
     },
   });
 
@@ -40,13 +45,7 @@ const ItemsGrid = async ({
     );
   }
 
-  return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-      {items.map((item) => (
-        <ItemCard key={item.id} item={item} />
-      ))}
-    </div>
-  );
+  return <ItemsGridClient items={items} />;
 };
 
 export default ItemsGrid;

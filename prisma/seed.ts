@@ -4,29 +4,18 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from './generated/prisma/client';
 import { itemTypes, collections, items } from './seed-data';
 
-const currentUser = { id: 'user-1', name: 'John Doe', email: 'john@example.com', image: '/images/default-avatar.png', isPro: false };
+const currentUser = { id: 'DLDeIPI8SS6g4FiWEkdZlifEjKGn1JFd', name: 'Ahmed Haitham', email: 'ah607k@gmail.com' };
+const demoUserId = 'user-1';
 
 const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  await prisma.itemTag.deleteMany();
-  await prisma.tag.deleteMany();
-  await prisma.item.deleteMany();
-  await prisma.collection.deleteMany();
-  await prisma.itemType.deleteMany();
-  await prisma.user.deleteMany();
-
-  await prisma.user.create({
-    data: {
-      id: currentUser.id,
-      name: currentUser.name,
-      email: currentUser.email,
-      emailVerified: true,
-      image: currentUser.image,
-      isPro: currentUser.isPro,
-    },
-  });
+  await prisma.itemTag.deleteMany({ where: { tag: { userId: { in: [currentUser.id, demoUserId] } } } });
+  await prisma.tag.deleteMany({ where: { userId: { in: [currentUser.id, demoUserId] } } });
+  await prisma.item.deleteMany({ where: { userId: { in: [currentUser.id, demoUserId] } } });
+  await prisma.collection.deleteMany({ where: { userId: { in: [currentUser.id, demoUserId] } } });
+  await prisma.user.deleteMany({ where: { id: demoUserId } });
 
   await prisma.itemType.createMany({
     data: itemTypes.map((type) => ({
@@ -36,6 +25,7 @@ async function main() {
       color: type.color,
       isSystem: type.isSystem,
     })),
+    skipDuplicates: true,
   });
 
   await prisma.collection.createMany({
