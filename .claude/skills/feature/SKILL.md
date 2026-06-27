@@ -4,7 +4,7 @@
 
 **Name**: Adding Feature
 **Description**: This skill is to add a new feature to the application
-**Hints**: load | start | review | explain | complete
+**Hints**: load | start | review | test | explain | complete
 
 ---
 
@@ -29,6 +29,21 @@
 - Make sure the feature is completed and ready for review. If not, please ask to use the skill hint `start` to start working on the feature first.
 - Once the feature is completed, start by reviewing the code changes made in the feature branch. Make sure to check for code quality, functionality, and adherence to the goals of the feature.
 - Make sure there are no errors or warnings in the code. If there are any, mention them in the review and ask the developer to fix them or suggest improvements.
+
+## If `test` hint is provided, then make sure to follow the steps below:
+
+- Only run this hint after the feature is complete. If not, ask the developer to use the `start` hint first.
+
+- If the feature uses mutating operations (create, update, delete), test all of them and verify:
+  - Data is saved correctly in the database
+  - UI reflects the change without a full page reload
+  - Error states are handled correctly
+  - If there are any issues, mention them and suggest improvements
+
+- If the feature uses read operations:
+  - If read is done in an **SSR component** → verify the data is fetched server side and passed correctly to the component. No client side interaction testing needed.
+  - If read is done in a **server action** → test both the server action and the TanStack Query client component to make sure data is fetched and displayed correctly
+  - If there are any issues, mention them and suggest improvements
 
 ## If `explain` hint is provided, then make sure to follow the steps below:
 

@@ -89,6 +89,18 @@ Example v4 configuration:
 - Return `{ success, data, message }` pattern from actions
 - Display user-friendly error messages via toast
 
+## Testing
+
+- Vitest is the unit testing framework, run via pnpm (`pnpm test`, `pnpm test:watch`, `pnpm test:coverage`)
+- `jsdom` + React Testing Library (`@testing-library/react`, `@testing-library/jest-dom`) are available for component tests
+- Config lives in `vitest.config.ts` (root) and `vitest.setup.ts`; the `@/*` alias mirrors `tsconfig.json`
+- Colocate test files next to the source they cover, named `[file].test.ts`/`.test.tsx`
+- What to test:
+  - Server Actions that do create/update/delete (CRUD) operations
+  - SSR components/server components that fetch data from the database
+  - `lib/utils` (and similar `lib/*` helper) functions
+  - Any function that formats dates with `date-fns` — test that the format produces the expected output
+
 ## Code Quality
 
 - No commented-out code unless specified
