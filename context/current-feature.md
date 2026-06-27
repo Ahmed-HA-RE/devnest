@@ -2,24 +2,11 @@
 
 <!-- Feature name -->
 
-Item Drawer
-
 <!-- Feature Description -->
-
-Implement an item drawer that opens on the right side when a user clicks on an item card, displaying the item's full content alongside action buttons (Favorite, Edit, Delete, Pin, Copy content). The item card itself is refactored to fetch only the minimal fields needed for the list view (title, icon, isPinned, isFavorite, createdAt, tags) via SSR, while the drawer's full item content is fetched client-side through a TanStack Query hook backed by a server action (`@/lib/actions/dashboard/get-items-action.ts`), only enabled while the drawer is open.
 
 <!-- Goals -->
 
-- Refactor `ItemCard` to fetch/display only minimal fields (title, icon, isPinned, isFavorite, createdAt, tags) on the SSR component.
-- Add `@/lib/actions/dashboard/get-items-action.ts` server action to fetch full item data for the drawer.
-- Build a TanStack Query client hook around that server action, destructuring `isLoading`, `status`, `error`, and `data`, with `enabled: !!isOpen` so it only fetches when the drawer is open.
-- Set up TanStack Query + Next.js hydration following the official Next.js App Router prefetching example/docs.
-- Implement the drawer UI with shadcn's Drawer component, showing item content and action buttons (Favorite, Edit, Delete, Pin, Copy content).
-- Add a Drawer Skeleton shown while `isLoading` is true.
-
 <!-- Status -->
-
-Completed
 
 <!-- History -->
 
