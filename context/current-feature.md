@@ -2,23 +2,11 @@
 
 <!-- Feature name -->
 
-Unit Testing Infrastructure
-
 <!-- Feature Description -->
-
-Install and configure Vitest (with pnpm) as the project's unit testing framework, including jsdom + React Testing Library support for component tests and `@/*` path alias resolution matching `tsconfig.json`. Update the context docs to describe the testing stack and the specific workflow going forward (no example tests written yet — first real tests land with the next feature that touches CRUD Server Actions, an SSR DB-fetching component, a `lib/utils`-style helper, or `date-fns` date formatting).
 
 <!-- Goals -->
 
-- Vitest installed and configured via pnpm, runnable with `pnpm test`
-- jsdom environment + React Testing Library available for component tests
-- `@/*` path alias resolves in tests the same way it does in the app
-- `coding-standards.md` documents the testing stack and what to test (CRUD Server Actions, SSR DB-fetching components, `lib/utils`-style helpers, `date-fns` formatting)
-- `ai-interaction.md` workflow step 4 updated to reflect that unit testing is now implemented (not deferred)
-
 <!-- Status -->
-
-Completed
 
 <!-- History -->
 
