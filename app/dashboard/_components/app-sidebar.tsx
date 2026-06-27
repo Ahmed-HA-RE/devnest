@@ -118,7 +118,7 @@ const AppSidebar = async () => {
                       asChild
                       tooltip={`${type.name.charAt(0).toUpperCase()}${type.name.slice(1)}s`}
                     >
-                      <Link href={`/items/${type.name}`}>
+                      <Link href={`/dashboard/items/${type.name}`}>
                         <Icon className={className} style={style} />
                         <span className='capitalize'>{type.name}s</span>
                         {(type.name === 'image' || type.name === 'file') && (
