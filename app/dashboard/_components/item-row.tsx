@@ -18,9 +18,23 @@ const renderTypeIcon = (item: ItemWithRelations) => {
   );
 };
 
-const ItemRow = ({ item }: { item: ItemWithRelations }) => {
+const ItemRow = ({
+  item,
+  onSelect,
+}: {
+  item: ItemWithRelations;
+  onSelect: (itemId: string) => void;
+}) => {
   return (
-    <div className='flex items-center gap-3 border-b px-4 py-3 last:border-b-0'>
+    <div
+      role='button'
+      tabIndex={0}
+      onClick={() => onSelect(item.id)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onSelect(item.id);
+      }}
+      className='flex cursor-pointer items-center gap-3 border-b px-4 py-4 last:border-b-0 hover:bg-muted/50 transition-all duration-200'
+    >
       <div className='flex size-8 shrink-0 items-center justify-center rounded-md bg-muted'>
         {renderTypeIcon(item)}
       </div>

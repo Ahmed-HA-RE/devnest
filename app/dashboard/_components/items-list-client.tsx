@@ -3,18 +3,19 @@
 import { useState } from 'react';
 
 import ItemDrawer from '@/components/shared/item-drawer';
-import ItemCard, { type ItemCardData } from './item-card';
+import { Card } from '@/components/ui/card';
+import ItemRow, { type ItemWithRelations } from './item-row';
 
-const ItemsGridClient = ({ items }: { items: ItemCardData[] }) => {
+const ItemsListClient = ({ items }: { items: ItemWithRelations[] }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   return (
     <>
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+      <Card className='py-0 gap-0'>
         {items.map((item) => (
-          <ItemCard key={item.id} item={item} onSelect={setSelectedItemId} />
+          <ItemRow key={item.id} item={item} onSelect={setSelectedItemId} />
         ))}
-      </div>
+      </Card>
       <ItemDrawer
         itemId={selectedItemId}
         open={!!selectedItemId}
@@ -26,4 +27,4 @@ const ItemsGridClient = ({ items }: { items: ItemCardData[] }) => {
   );
 };
 
-export default ItemsGridClient;
+export default ItemsListClient;

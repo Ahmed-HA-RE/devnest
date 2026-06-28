@@ -1,8 +1,7 @@
 import { VscPinned } from 'react-icons/vsc';
-import { Card } from '@/components/ui/card';
 import EmptyState from '@/components/shared/empty-state';
 import { prisma } from '@/lib/db';
-import ItemRow from './item-row';
+import ItemsListClient from './items-list-client';
 
 const PinnedItems = async ({ userId }: { userId: string }) => {
   const pinnedItems = await prisma.item.findMany({
@@ -27,11 +26,7 @@ const PinnedItems = async ({ userId }: { userId: string }) => {
           description='Pin items you use often to find them here quickly.'
         />
       ) : (
-        <Card className='py-0'>
-          {pinnedItems.map((item) => (
-            <ItemRow key={item.id} item={item} />
-          ))}
-        </Card>
+        <ItemsListClient items={pinnedItems} />
       )}
     </section>
   );
