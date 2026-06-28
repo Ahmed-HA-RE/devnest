@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { updateItemAction } from '@/lib/actions/dashboard/dashboard-action';
+import { updateItemAction } from '@/lib/actions/dashboard/update-item-action';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
 
 const CONTENT_TYPES = ['snippet', 'prompt', 'command', 'note'];

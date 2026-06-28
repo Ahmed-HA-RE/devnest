@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/drawer';
 import { useItem } from '@/hooks/use-item';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
+import ItemDeleteDialog from './item-delete-dialog';
 import ItemDrawerSkeleton from './item-drawer-skeleton';
 import ItemEditForm from './item-edit-form';
 
@@ -44,6 +45,7 @@ const ItemDrawer = ({
   onOpenChange: (open: boolean) => void;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const {
     data: item,
     isLoading,
@@ -133,7 +135,12 @@ const ItemDrawer = ({
                       <FaPen />
                       Edit
                     </Button>
-                    <Button variant='destructive' size='sm'>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='text-red-500 hover:text-red-500'
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                    >
                       <FaTrashCan />
                       Delete
                     </Button>
@@ -223,6 +230,14 @@ const ItemDrawer = ({
                 </div>
               </>
             )}
+
+            <ItemDeleteDialog
+              itemId={item.id}
+              itemName={item.title}
+              open={isDeleteDialogOpen}
+              onOpenChange={setIsDeleteDialogOpen}
+              onDeleted={() => handleOpenChange(false)}
+            />
           </>
         )}
       </DrawerContent>

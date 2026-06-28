@@ -1,9 +1,8 @@
 import { FiPackage } from 'react-icons/fi';
 
-import { Card } from '@/components/ui/card';
 import EmptyState from '@/components/shared/empty-state';
 import { prisma } from '@/lib/db';
-import ItemRow from './item-row';
+import ItemsListClient from './items-list-client';
 
 const RECENT_ITEMS_COUNT = 10;
 
@@ -30,11 +29,7 @@ const RecentItems = async ({ userId }: { userId: string }) => {
           description='Items you create will show up here.'
         />
       ) : (
-        <Card className='py-0'>
-          {recentItems.map((item) => (
-            <ItemRow key={item.id} item={item} />
-          ))}
-        </Card>
+        <ItemsListClient items={recentItems} />
       )}
     </section>
   );

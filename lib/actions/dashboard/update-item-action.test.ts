@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import type { EditTypeSchema } from '@/schema/dashboard';
-import { updateItemAction } from './dashboard-action';
+import { updateItemAction } from './update-item-action';
 
 vi.mock('@/lib/auth', () => ({
   auth: { api: { getSession: vi.fn() } },
