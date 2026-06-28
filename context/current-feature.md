@@ -2,24 +2,12 @@
 
 <!-- Feature name -->
 
-Item Drawer — Edit Mode
-
 <!-- Feature Description -->
-
-Clicking the Edit button (pencil icon) in the item drawer's action bar switches the drawer from view mode to edit mode inline, turning the displayed fields into editable inputs without closing the drawer.
 
 <!-- Goals -->
 
-- Toggle the drawer between view and edit mode via the Edit button, replacing the action bar with Save (`FaRegSave`) and Cancel (`IoMdClose`) controls
-- Cancel discards changes and returns to view mode; Save persists via a server action, returns to view mode, and revalidates both the TanStack Query cache and the `/items/[type]` route
-- Editable fields: Title (required), Description, Tags (comma-separated → array), plus type-specific fields (Content for snippet/prompt/command/note, Language for snippet/command, URL for link)
-- Non-editable in edit mode: item type, collections, created/updated dates
-- Add `editTypeSchema` to `@/schema/dashboard.ts` and a `updateItem(itemId, data)` server action in `@/lib/actions/dashboard-action.ts` following the `{ success, data, error }` pattern, with session/ownership validation and Zod `safeParse` (mapping validation messages into a comma-separated error)
-- Use `react-hook-form` for client-side validation/submission state (spinner while `isSubmitting`), with a disabled Save button when title is empty, and a toast on save success/error
-
 <!-- Status -->
 
-Completed
 
 <!-- History -->
 
