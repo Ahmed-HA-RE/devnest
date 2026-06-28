@@ -2,28 +2,12 @@
 
 <!-- Feature name -->
 
-Create Type
-
 <!-- Feature Description -->
-
-Implement create type operation by letting the user press on the new item button in the topbar of their dashboard to create a specific type (snippet, command, prompt, note, or link).
 
 <!-- Goals -->
 
-- Add a shadcn UI `Dialog` for the feature, using `react-hook-form` with Zod validation on both the frontend and backend.
-- Backend validation imports the schema and uses `safeParse`, looping through the resulting error array and joining the messages with `,` before returning them to the frontend.
-- Fields shown based on selected type:
-  - All types: title (required), description, tags
-  - snippet/command: content, language
-  - prompt/note: content
-  - link: URL (required)
-- Add a `createTypeSchema` variable in `@/schema/dashboard.ts` (reuse `editSchema` if possible instead of duplicating it).
-- Newly created items must appear first in lists (descending order).
-- Add the action file at `@/lib/actions/dashboard/create-type-action.ts`.
-
 <!-- Status -->
 
-Completed
 
 
 <!-- History -->
