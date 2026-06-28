@@ -1,8 +1,9 @@
-import { FiFolderPlus, FiPlus, FiSearch } from 'react-icons/fi';
+import { FiFolderPlus, FiSearch } from 'react-icons/fi';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import CreateTypeDialog from './create-type-dialog';
 import ThemeToggle from './theme-toggle';
 
 const Topbar = () => {
@@ -26,10 +27,7 @@ const Topbar = () => {
           <FiFolderPlus />
           New Collection
         </Button>
-        <Button className='hidden md:inline-flex'>
-          <FiPlus />
-          New Item
-        </Button>
+        <CreateTypeDialog />
       </div>
     </header>
   );
