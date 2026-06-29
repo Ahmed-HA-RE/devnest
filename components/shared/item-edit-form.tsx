@@ -21,6 +21,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { updateItemAction } from '@/lib/actions/dashboard/update-item-action';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
 import { CONTENT_TYPES, LANGUAGE_TYPES } from '@/lib/constants/type';
+import CodeEditor from './code-editor';
 
 type ItemEditFormValues = {
   title: string;
@@ -63,6 +64,7 @@ const ItemEditForm = ({
 
   //  eslint-disable-next-line
   const title = watch('title');
+  const language = watch('language');
 
   const onSubmit = async (values: ItemEditFormValues) => {
     const tags = values.tagsInput
@@ -159,12 +161,20 @@ const ItemEditForm = ({
             render={({ field }) => (
               <Field>
                 <FieldLabel htmlFor='edit-content'>Content</FieldLabel>
-                <Textarea
-                  {...field}
-                  id='edit-content'
-                  rows={6}
-                  className='font-mono text-xs'
-                />
+                {showLanguage ? (
+                  <CodeEditor
+                    value={field.value}
+                    onChange={field.onChange}
+                    language={language}
+                  />
+                ) : (
+                  <Textarea
+                    {...field}
+                    id='edit-content'
+                    rows={6}
+                    className='font-mono text-xs'
+                  />
+                )}
               </Field>
             )}
           />

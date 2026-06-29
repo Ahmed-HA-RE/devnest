@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import CodeEditor from '@/components/shared/code-editor';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { createTypeAction } from '@/lib/actions/dashboard/create-type-action';
@@ -63,6 +64,7 @@ const CreateTypeDialog = () => {
 
   // eslint-disable-next-line
   const type = watch('type');
+  const language = watch('language');
   const showContent = CONTENT_TYPES.includes(type);
   const showLanguage = LANGUAGE_TYPES.includes(type);
   const showUrl = type === 'link';
@@ -189,13 +191,21 @@ const CreateTypeDialog = () => {
               render={({ field }) => (
                 <Field>
                   <FieldLabel htmlFor='create-content'>Content</FieldLabel>
-                  <Textarea
-                    {...field}
-                    value={field.value ?? ''}
-                    id='create-content'
-                    rows={6}
-                    className='font-mono text-xs'
-                  />
+                  {showLanguage ? (
+                    <CodeEditor
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      language={language}
+                    />
+                  ) : (
+                    <Textarea
+                      {...field}
+                      value={field.value ?? ''}
+                      id='create-content'
+                      rows={6}
+                      className='font-mono text-xs'
+                    />
+                  )}
                 </Field>
               )}
             />
