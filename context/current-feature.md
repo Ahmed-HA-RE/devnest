@@ -2,23 +2,11 @@
 
 <!-- Feature name -->
 
-Code Editor
-
 <!-- Feature Description -->
-
-Implement a code editor for item types of either `snippet` or `command`, using `@monaco-editor/react`. The editor header mimics a mac/windows window: three decorative dots (red, yellow, green) on the left, a `react-icons` language icon and a copy button (`FaRegCopy`) on the right. The editor also shows numeric line numbers. Other item types (note, link, prompt, etc.) are explicitly out of scope for this pass — a markdown editor for those will be implemented later.
 
 <!-- Goals -->
 
-- Add a Monaco-based code editor restricted to `snippet`/`command` item types, used both in the item drawer's edit mode and in the create-new-item dialog.
-- Header with decorative red/yellow/green dots, a language icon (react-icons), and a copy-to-clipboard button.
-- Copy button copies the full code content and shows a success toast.
-- Editor displays numeric line numbers.
-- Do not touch other item types (note/link/prompt/etc.) in this pass.
-
 <!-- Status -->
-
-Completed
 
 
 <!-- History -->
