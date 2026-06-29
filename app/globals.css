@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
@@ -217,6 +218,29 @@
 .dark .pro-badge {
   background-image: linear-gradient(to top, #9be15d 0%, #00e3ae 100%);
   color: #09203f;
+}
+
+.themed-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.themed-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.themed-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.themed-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 9999px;
+}
+
+.themed-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
 }
 
 .container {

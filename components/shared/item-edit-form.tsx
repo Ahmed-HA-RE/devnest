@@ -20,8 +20,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { updateItemAction } from '@/lib/actions/dashboard/update-item-action';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
-import { CONTENT_TYPES, LANGUAGE_TYPES } from '@/lib/constants/type';
+import {
+  CONTENT_TYPES,
+  LANGUAGE_TYPES,
+  MARKDOWN_TYPES,
+} from '@/lib/constants/type';
 import CodeEditor from './code-editor';
+import MarkdownEditor from './markdown-editor';
 
 type ItemEditFormValues = {
   title: string;
@@ -44,6 +49,7 @@ const ItemEditForm = ({
   const queryClient = useQueryClient();
   const showContent = CONTENT_TYPES.includes(item.type.name);
   const showLanguage = LANGUAGE_TYPES.includes(item.type.name);
+  const showMarkdown = MARKDOWN_TYPES.includes(item.type.name);
   const showUrl = item.type.name === 'link';
 
   const {
@@ -167,6 +173,8 @@ const ItemEditForm = ({
                     onChange={field.onChange}
                     language={language}
                   />
+                ) : showMarkdown ? (
+                  <MarkdownEditor value={field.value} onChange={field.onChange} />
                 ) : (
                   <Textarea
                     {...field}

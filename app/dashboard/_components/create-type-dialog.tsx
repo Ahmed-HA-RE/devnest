@@ -26,12 +26,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import CodeEditor from '@/components/shared/code-editor';
+import MarkdownEditor from '@/components/shared/markdown-editor';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { createTypeAction } from '@/lib/actions/dashboard/create-type-action';
 import {
   CONTENT_TYPES,
   LANGUAGE_TYPES,
+  MARKDOWN_TYPES,
   TYPE_OPTIONS,
 } from '@/lib/constants/type';
 import { createTypeSchema, type CreateTypeSchema } from '@/schema/dashboard';
@@ -67,6 +69,7 @@ const CreateTypeDialog = () => {
   const language = watch('language');
   const showContent = CONTENT_TYPES.includes(type);
   const showLanguage = LANGUAGE_TYPES.includes(type);
+  const showMarkdown = MARKDOWN_TYPES.includes(type);
   const showUrl = type === 'link';
 
   useEffect(() => {
@@ -196,6 +199,11 @@ const CreateTypeDialog = () => {
                       value={field.value ?? ''}
                       onChange={field.onChange}
                       language={language}
+                    />
+                  ) : showMarkdown ? (
+                    <MarkdownEditor
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
                     />
                   ) : (
                     <Textarea

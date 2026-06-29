@@ -8,3 +8,4 @@ export const TYPE_OPTIONS = [
 
 export const CONTENT_TYPES = ['snippet', 'prompt', 'command', 'note'];
 export const LANGUAGE_TYPES = ['snippet', 'command'];
+export const MARKDOWN_TYPES = ['note', 'prompt'];

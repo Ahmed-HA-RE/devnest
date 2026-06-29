@@ -211,7 +211,7 @@ graph TD
 ```mermaid
 flowchart LR
   User --> Login["Login Page"]
-  Login --> NA["NextAuth v5"]
+  Login --> NA["Better Auth"]
   NA --> P{"Provider"}
   P -->|Email + Password| DB[("Neon DB")]
   P -->|GitHub OAuth| GH["GitHub"]

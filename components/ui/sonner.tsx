@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from 'next-themes';
+import { useTheme } from '@teispace/next-themes';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 import { FaInfoCircle, FaRegCheckCircle } from 'react-icons/fa';
 import { FaSpinner } from 'react-icons/fa6';

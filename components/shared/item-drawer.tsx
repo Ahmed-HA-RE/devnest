@@ -24,11 +24,12 @@ import {
 } from '@/components/ui/drawer';
 import { useItem } from '@/hooks/use-item';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
-import { LANGUAGE_TYPES } from '@/lib/constants/type';
+import { LANGUAGE_TYPES, MARKDOWN_TYPES } from '@/lib/constants/type';
 import CodeEditor from './code-editor';
 import ItemDeleteDialog from './item-delete-dialog';
 import ItemDrawerSkeleton from './item-drawer-skeleton';
 import ItemEditForm from './item-edit-form';
+import MarkdownEditor from './markdown-editor';
 
 const renderTypeIcon = (item: ItemDetail) => {
   const Icon = getIcon(item.type.name);
@@ -174,6 +175,8 @@ const ItemDrawer = ({
                           language={item.language}
                           readOnly
                         />
+                      ) : MARKDOWN_TYPES.includes(item.type.name) ? (
+                        <MarkdownEditor value={item.content} readOnly />
                       ) : (
                         <pre className='overflow-x-auto rounded-md bg-muted p-3 text-xs'>
                           <code>{item.content}</code>
