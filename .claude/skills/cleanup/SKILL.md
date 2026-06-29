@@ -11,6 +11,7 @@ Review the codebase for cleanup tasks:
 5. Find orphaned/unused files
 6. Check that context files match actual project state
 7. Find `@ts-ignore` comments that might be stale
+8. Find any nonused dependencies in package.json and package-lock.json and suggest removing them
 
 If no argument or argument is "check":
 

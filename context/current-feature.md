@@ -2,24 +2,11 @@
 
 <!-- Feature name -->
 
-Markdown Editor
-
 <!-- Feature Description -->
-
-Implement a markdown editor for `note` and `prompt` type items, rendered when creating a new item of either type or when toggling edit mode on an existing one. Built with `@tiptap/react` (using only `@tiptap/starter-kit`) and styled via the Tailwind Typography plugin's `prose` class.
 
 <!-- Goals -->
 
-- Install and configure `@tiptap/react`, `@tiptap/pm`, `@tiptap/starter-kit`.
-- Support core markdown elements: headings, bold, italic, blockquote, ordered/unordered lists, inline code, horizontal rule, and links.
-- Install `@tailwindcss/typography`, add the plugin to `app/global.css`, and apply the `prose` class so editor output is styled correctly.
-- Match the existing mac-style header treatment (red/yellow/green dots + language icon + copy button, per the Code Editor feature) with a "Markdown" language icon.
-- Add a Write/Preview tab toggle in the editor header.
-- Constrain the editor to a min width of 200px and a max width of 400px.
-
 <!-- Status -->
-
-Completed
 
 
 <!-- History -->
