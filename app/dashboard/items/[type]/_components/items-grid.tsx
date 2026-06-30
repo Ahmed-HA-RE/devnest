@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getIcon } from '@/components/icon-map';
 import EmptyState from '@/components/shared/empty-state';
 import { prisma } from '@/lib/db';
+import ImageGalleryClient from './image-gallery-client';
 import ItemsGridClient from './items-grid-client';
 
 const ItemsGrid = async ({
@@ -20,6 +21,34 @@ const ItemsGrid = async ({
     return notFound();
   }
 
+  const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}s`;
+  const emptyState = (
+    <EmptyState
+      icon={getIcon(type)}
+      title={`No ${label.toLowerCase()} yet`}
+      description={`${label} you create will show up here.`}
+    />
+  );
+
+  if (type === 'image') {
+    const images = await prisma.item.findMany({
+      where: { userId, typeId: itemType.id },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        fileUrl: true,
+        fileName: true,
+        isPinned: true,
+        isFavorite: true,
+        type: { select: { name: true, color: true } },
+      },
+    });
+
+    if (images.length === 0) return emptyState;
+    return <ImageGalleryClient items={images} />;
+  }
+
   const items = await prisma.item.findMany({
     where: { userId, typeId: itemType.id },
     orderBy: { createdAt: 'desc' },
@@ -34,16 +63,7 @@ const ItemsGrid = async ({
     },
   });
 
-  if (items.length === 0) {
-    const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}s`;
-    return (
-      <EmptyState
-        icon={getIcon(type)}
-        title={`No ${label.toLowerCase()} yet`}
-        description={`${label} you create will show up here.`}
-      />
-    );
-  }
+  if (items.length === 0) return emptyState;
 
   return <ItemsGridClient items={items} />;
 };

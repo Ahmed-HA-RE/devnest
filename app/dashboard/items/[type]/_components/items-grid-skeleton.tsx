@@ -1,6 +1,15 @@
+import ImageGalleryCardSkeleton from './image-gallery-card-skeleton';
 import ItemCardSkeleton from './item-card-skeleton';
 
 const ITEMS_GRID_SKELETON_COUNT = 6;
+
+export const ImageGalleryGridSkeleton = () => (
+  <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+    {Array.from({ length: ITEMS_GRID_SKELETON_COUNT }).map((_, i) => (
+      <ImageGalleryCardSkeleton key={i} />
+    ))}
+  </div>
+);
 
 const ItemsGridSkeleton = () => (
   <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>

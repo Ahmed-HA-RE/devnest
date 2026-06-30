@@ -12,6 +12,8 @@ import {
 } from 'react-icons/fa6';
 import { IoMdDownload } from 'react-icons/io';
 
+import Image from 'next/image';
+
 import { getIcon } from '@/components/icon-map';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -54,12 +56,7 @@ const ItemDrawer = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const {
-    data: item,
-    isLoading,
-    status,
-    error,
-  } = useItem(itemId, open);
+  const { data: item, isLoading, status, error } = useItem(itemId, open);
 
   const handleOpenChange = (next: boolean) => {
     if (!next) setIsEditing(false);
@@ -134,17 +131,21 @@ const ItemDrawer = ({
                     <FaCopy />
                     Copy
                   </Button>
-                  {FILE_UPLOAD_TYPES.includes(item.type.name) && item.fileUrl && (
-                    <Button variant='ghost' size='sm' asChild>
-                      <a
-                        href={item.fileUrl.replace('/upload/', '/upload/fl_attachment/')}
-                        download={item.fileName ?? item.title}
-                      >
-                        <IoMdDownload />
-                        Download
-                      </a>
-                    </Button>
-                  )}
+                  {FILE_UPLOAD_TYPES.includes(item.type.name) &&
+                    item.fileUrl && (
+                      <Button variant='ghost' size='sm' asChild>
+                        <a
+                          href={item.fileUrl.replace(
+                            '/upload/',
+                            '/upload/fl_attachment/',
+                          )}
+                          download={item.fileName ?? item.title}
+                        >
+                          <IoMdDownload />
+                          Download
+                        </a>
+                      </Button>
+                    )}
                   <div className='ml-auto flex items-center gap-1'>
                     <Button
                       variant='ghost'
@@ -223,11 +224,13 @@ const ItemDrawer = ({
                         {item.type.name === 'image' ? 'Image' : 'File'}
                       </h3>
                       {item.type.name === 'image' ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={item.fileUrl}
                           alt={item.fileName ?? item.title}
-                          className='max-h-64 w-full rounded-md object-contain'
+                          width={1280}
+                          height={720}
+                          loading='eager'
+                          className='aspect-video w-full rounded-md object-contain'
                         />
                       ) : (
                         <a
