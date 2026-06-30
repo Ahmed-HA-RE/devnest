@@ -1,19 +1,13 @@
 # Current Feature
 
 <!-- Feature name -->
-Image Gallery Display
 
 <!-- Feature Description -->
-Change the images route UI to be a gallery where each image has a card with a title, replacing the existing list-style view.
 
 <!-- Goals -->
-- Install the `@ss-components/card-05` component from ShadCN Studio via `pnpm dlx shadcn@latest add @ss-components/card-05`
-- Refactor the images UI using this card component as the gallery item
-- On hover, scale only the image (not the whole card) with a smooth CSS transition
-- Use Tailwind's `group` utility on the card to trigger the image scale on card hover
 
 <!-- Status -->
-Completed
+
 
 <!-- History -->
 
