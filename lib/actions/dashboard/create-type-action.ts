@@ -6,6 +6,7 @@ import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { FILE_UPLOAD_TYPES } from '@/lib/constants/type';
 import { createTypeSchema, type CreateTypeSchema } from '@/schema/dashboard';
 
 export const createTypeAction = async (data: CreateTypeSchema) => {
@@ -25,9 +26,20 @@ export const createTypeAction = async (data: CreateTypeSchema) => {
       throw new Error(message);
     }
 
-    const { type, title, description, content, url, language, tags } =
-      parsed.data;
+    const {
+      type,
+      title,
+      description,
+      content,
+      url,
+      language,
+      fileUrl,
+      fileName,
+      fileSize,
+      tags,
+    } = parsed.data;
     const userId = session.user.id;
+    const isFileType = FILE_UPLOAD_TYPES.includes(type);
 
     const result = await prisma.$transaction(async (tx) => {
       const itemType = await tx.itemType.findFirst({
@@ -57,10 +69,13 @@ export const createTypeAction = async (data: CreateTypeSchema) => {
         data: {
           title,
           description: description ?? null,
-          content: content ?? null,
+          content: isFileType ? null : (content ?? null),
           url: url ?? null,
           language: language ?? null,
-          contentType: 'text',
+          fileUrl: isFileType ? (fileUrl ?? null) : null,
+          fileName: isFileType ? (fileName ?? null) : null,
+          fileSize: isFileType ? (fileSize ?? null) : null,
+          contentType: isFileType ? 'file' : 'text',
           userId,
           typeId: itemType.id,
           tags: {

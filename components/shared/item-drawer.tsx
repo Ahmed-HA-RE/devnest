@@ -10,6 +10,7 @@ import {
   FaTrashCan,
   FaXmark,
 } from 'react-icons/fa6';
+import { IoMdDownload } from 'react-icons/io';
 
 import { getIcon } from '@/components/icon-map';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +25,11 @@ import {
 } from '@/components/ui/drawer';
 import { useItem } from '@/hooks/use-item';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
-import { LANGUAGE_TYPES, MARKDOWN_TYPES } from '@/lib/constants/type';
+import {
+  FILE_UPLOAD_TYPES,
+  LANGUAGE_TYPES,
+  MARKDOWN_TYPES,
+} from '@/lib/constants/type';
 import CodeEditor from './code-editor';
 import ItemDeleteDialog from './item-delete-dialog';
 import ItemDrawerSkeleton from './item-drawer-skeleton';
@@ -129,6 +134,17 @@ const ItemDrawer = ({
                     <FaCopy />
                     Copy
                   </Button>
+                  {FILE_UPLOAD_TYPES.includes(item.type.name) && item.fileUrl && (
+                    <Button variant='ghost' size='sm' asChild>
+                      <a
+                        href={item.fileUrl.replace('/upload/', '/upload/fl_attachment/')}
+                        download={item.fileName ?? item.title}
+                      >
+                        <IoMdDownload />
+                        Download
+                      </a>
+                    </Button>
+                  )}
                   <div className='ml-auto flex items-center gap-1'>
                     <Button
                       variant='ghost'
@@ -204,16 +220,25 @@ const ItemDrawer = ({
                   {item.fileUrl && (
                     <section>
                       <h3 className='mb-1 text-sm font-medium text-muted-foreground'>
-                        File
+                        {item.type.name === 'image' ? 'Image' : 'File'}
                       </h3>
-                      <a
-                        href={item.fileUrl}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='text-sm text-primary underline-offset-4 hover:underline'
-                      >
-                        {item.fileName ?? item.fileUrl}
-                      </a>
+                      {item.type.name === 'image' ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.fileUrl}
+                          alt={item.fileName ?? item.title}
+                          className='max-h-64 w-full rounded-md object-contain'
+                        />
+                      ) : (
+                        <a
+                          href={item.fileUrl}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-sm text-primary underline-offset-4 hover:underline'
+                        >
+                          {item.fileName ?? item.fileUrl}
+                        </a>
+                      )}
                     </section>
                   )}
 

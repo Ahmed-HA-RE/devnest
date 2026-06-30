@@ -30,6 +30,7 @@
     "@upstash/redis": "^1.38.0",
     "better-auth": "^1.6.19",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "embla-carousel-autoplay": "^8.6.0",

@@ -16,6 +16,9 @@ export const editTypeSchema = z.object({
       message: 'Invalid URL',
     }),
   language: z.string().trim().nullable().optional(),
+  fileUrl: z.string().trim().nullable().optional(),
+  fileName: z.string().trim().nullable().optional(),
+  fileSize: z.number().nullable().optional(),
   tags: z.array(z.string().trim().min(1, 'Tag cannot be empty')),
 });
 
@@ -23,13 +26,22 @@ export type EditTypeSchema = z.infer<typeof editTypeSchema>;
 
 export const createTypeSchema = editTypeSchema
   .extend({
-    type: z.enum(['snippet', 'command', 'prompt', 'note', 'link'], {
-      error: 'Invalid type',
-    }),
+    type: z.enum(
+      ['snippet', 'command', 'prompt', 'note', 'link', 'file', 'image'],
+      { error: 'Invalid type' },
+    ),
   })
   .refine((data) => data.type !== 'link' || !!data.url?.trim(), {
     message: 'URL is required',
     path: ['url'],
-  });
+  })
+  .refine(
+    (data) =>
+      !['file', 'image'].includes(data.type) || !!data.fileUrl?.trim(),
+    {
+      message: 'File is required',
+      path: ['fileUrl'],
+    },
+  );
 
 export type CreateTypeSchema = z.infer<typeof createTypeSchema>;

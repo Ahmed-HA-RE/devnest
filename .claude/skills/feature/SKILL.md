@@ -45,6 +45,8 @@
   - If read is done in a **server action** → test both the server action and the TanStack Query client component to make sure data is fetched and displayed correctly
   - If there are any issues, mention them and suggest improvements
 
+  **Note**: Run the test with the installed testing framework (Vitest or Jest) and make sure to write unit tests for the feature if not already written.
+
 ## If `explain` hint is provided, then make sure to follow the steps below:
 
 - Explain the feature in detail, including its purpose, functionality, and how it fits into the overall application. Make sure to provide examples and use cases to help the developer understand the feature better.

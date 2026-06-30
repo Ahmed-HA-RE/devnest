@@ -7,10 +7,14 @@ import { FiPlus } from 'react-icons/fi';
 import { toast } from 'sonner';
 
 import { getIcon } from '@/components/icon-map';
+import FileUpload from '@/components/shared/file-upload';
+import CodeEditor from '@/components/shared/code-editor';
+import MarkdownEditor from '@/components/shared/markdown-editor';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -25,13 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import CodeEditor from '@/components/shared/code-editor';
-import MarkdownEditor from '@/components/shared/markdown-editor';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { createTypeAction } from '@/lib/actions/dashboard/create-type-action';
 import {
   CONTENT_TYPES,
+  FILE_UPLOAD_TYPES,
   LANGUAGE_TYPES,
   MARKDOWN_TYPES,
   TYPE_OPTIONS,
@@ -45,6 +48,9 @@ const DEFAULT_VALUES: CreateTypeSchema = {
   content: '',
   url: '',
   language: '',
+  fileUrl: '',
+  fileName: '',
+  fileSize: null,
   tags: [],
 };
 
@@ -71,12 +77,18 @@ const CreateTypeDialog = () => {
   const showLanguage = LANGUAGE_TYPES.includes(type);
   const showMarkdown = MARKDOWN_TYPES.includes(type);
   const showUrl = type === 'link';
+  const showFileUpload = FILE_UPLOAD_TYPES.includes(type);
 
   useEffect(() => {
     if (!showContent) setValue('content', '');
     if (!showLanguage) setValue('language', '');
     if (!showUrl) setValue('url', '');
-  }, [type, showContent, showLanguage, showUrl, setValue]);
+    if (!showFileUpload) {
+      setValue('fileUrl', '');
+      setValue('fileName', '');
+      setValue('fileSize', null);
+    }
+  }, [type, showContent, showLanguage, showUrl, showFileUpload, setValue]);
 
   const closeAndReset = () => {
     setOpen(false);
@@ -116,6 +128,7 @@ const CreateTypeDialog = () => {
       <DialogContent className='sm:max-w-lg gap-6'>
         <DialogHeader>
           <DialogTitle>Create Item</DialogTitle>
+          <DialogDescription className='hidden' />
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
           <Controller
@@ -186,6 +199,31 @@ const CreateTypeDialog = () => {
               </Field>
             )}
           />
+
+          {showFileUpload && (
+            <Controller
+              name='fileUrl'
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>
+                    File <span className='text-destructive'>*</span>
+                  </FieldLabel>
+                  <FileUpload
+                    itemType={type as 'file' | 'image'}
+                    onUploaded={({ url, fileName, fileSize }) => {
+                      field.onChange(url);
+                      setValue('fileName', fileName);
+                      setValue('fileSize', fileSize);
+                    }}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          )}
 
           {showContent && (
             <Controller
