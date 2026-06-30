@@ -2,12 +2,20 @@
 
 <!-- Feature name -->
 
+Refactor — Quick Wins
+
 <!-- Feature Description -->
+
+Targeted fixes from a full codebase audit: rate limiting on the upload endpoint and lazy loading on image gallery cards.
 
 <!-- Goals -->
 
+- Add rate limiting to `POST /api/upload` (10 req/60s) and `DELETE /api/upload` (20 req/60s) to prevent cost-amplification via Cloudinary quota abuse
+- Remove `loading='eager'` from `ImageGalleryCard` to restore Next.js default lazy loading and reduce initial page weight for large image libraries
+
 <!-- Status -->
 
+Completed
 
 <!-- History -->
 
@@ -43,3 +51,4 @@
 - 2026-06-30: Implemented File & Image Upload — added Cloudinary-backed upload for the "File" and "Image" item types. `lib/cloudinary.ts` with `uploadFile`, `deleteCloudinaryFile`, `extractPublicId` helpers (folder from `CLOUDINARY_FOLDER` env var, UUID filenames). `app/api/upload/route.ts` POST/DELETE endpoints with session auth, empty-file guard, MIME normalization (handles `text/plain; charset=utf-8`), and per-type size limits. `components/shared/file-upload.tsx` drag-and-drop component with `IoIosCloudDownload` icon, real-time `XMLHttpRequest` progress bar, image preview thumbnail, and a Replace button. `schema/dashboard.ts` extended with `fileUrl`/`fileName`/`fileSize` on `editTypeSchema` and `file`/`image` added to `createTypeSchema`'s enum with a required-`fileUrl` refine. `lib/constants/type.ts` gains `FILE_UPLOAD_TYPES`, `FILE_ALLOWED_EXTENSIONS`, `FILE_MAX_SIZE`. `create-type-action.ts` and `update-item-action.ts` updated to handle `contentType: 'file'` and propagate `fileUrl`/`fileName`/`fileSize`; `update-item-action.ts` also cleans up the replaced Cloudinary file (non-fatal). `delete-item-action.ts` deletes the Cloudinary resource after DB delete (non-fatal). `item-drawer.tsx` gains a Download button (`IoMdDownload`) using Cloudinary's `fl_attachment` flag for a direct download, and renders an image preview for image items. `create-type-dialog.tsx` and `item-edit-form.tsx` wired with the `FileUpload` component for file/image types. Vitest suites updated — 29 tests passing across all three action test files covering Cloudinary flows, file validation, and non-fatal cleanup paths. Added `CLOUDINARY_FOLDER` to `.env.example`. Build, TypeScript, and tests all pass.
 - 2026-06-30: Implemented Image Gallery Display — replaced the generic list/card view for the `image` type with a dedicated gallery layout. Added `ImageGalleryCard` (aspect-video `next/image` thumbnail with group-hover scale, pinned/favorite icons), `ImageGalleryClient` (client wrapper owning selected-item state + `ItemDrawer`), and `ImageGalleryCardSkeleton`; exported `ImageGalleryGridSkeleton` from `items-grid-skeleton.tsx`. `ItemsGrid` now branches on `type === 'image'` to render the gallery path with a narrowed Prisma select (`id`, `title`, `fileUrl`, `fileName`, `isPinned`, `isFavorite`, `type`). `page.tsx` picks `ImageGalleryGridSkeleton` as the `<Suspense>` fallback for the image route. Added Cloudinary `remotePatterns` to `next.config.ts`. Upgraded the drawer's image preview from a `max-h-64`-capped `<img>` to a full-width `aspect-video` `<Image>` for a more prominent display. Build and TypeScript clean.
 - 2026-06-30: Implemented Files Type UI Display — replaced the generic grid/card layout for the `file` item type with a dedicated Dropbox-inspired 1-column list. Added `FileListCard` (`app/dashboard/items/[type]/_components/file-list-card.tsx`) with a `FaFileAlt` icon box, title, description, formatted file size (B/KB/MB/GB), createdAt, and a shadcn `Button size="icon"` wrapping an `<a download>` link with `FaDownload` that stops click propagation so the card's drawer-open handler isn't triggered. Added `FileListClient` (client wrapper with selected-item state + `ItemDrawer`) and `FileListCardSkeleton`; exported `FileListGridSkeleton` from `items-grid-skeleton.tsx`. `ItemsGrid` now branches on `type === 'file'` alongside the existing `type === 'image'` branch, with a narrowed Prisma select (`id`, `title`, `description`, `fileUrl`, `fileName`, `fileSize`, `isPinned`, `isFavorite`, `createdAt`, `type`). `page.tsx` uses `FileListGridSkeleton` as the `<Suspense>` fallback for the file route. Responsive: flex-row on desktop, flex-col on mobile. Build and TypeScript clean.
+- 2026-06-30: Implemented Quick Wins (Refactor) — applied two targeted fixes from a codebase audit. Added rate limiting to `app/api/upload/route.ts`: POST throttled at 10 req/60s and DELETE at 20 req/60s using the existing `rateLimit()` helper and `getClientIp(request.headers)`, matching the auth route pattern; prevents cost-amplification attacks on Cloudinary quota. Removed `loading='eager'` from `ImageGalleryCard` (`app/dashboard/items/[type]/_components/image-gallery-card.tsx`) to restore `next/image` default lazy loading, avoiding eager fetch of all below-the-fold thumbnails on page load. `tsc --noEmit` clean.

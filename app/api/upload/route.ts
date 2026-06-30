@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { getClientIp } from 'next-request-ip';
 
 import { auth } from '@/lib/auth';
 import {
@@ -8,6 +9,7 @@ import {
   uploadFile,
   type CloudinaryResourceType,
 } from '@/lib/cloudinary';
+import { rateLimit } from '@/lib/rate-limit';
 
 const FILE_CONFIG = {
   file: {
@@ -31,6 +33,12 @@ const FILE_CONFIG = {
 
 export const POST = async (request: NextRequest) => {
   try {
+    const ip = getClientIp(request.headers) ?? 'unknown';
+    const { success } = await rateLimit({ prefix: 'upload:post', identifier: ip, requests: 10, window: '60 s' });
+    if (!success) {
+      return NextResponse.json({ message: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -94,6 +102,12 @@ export const POST = async (request: NextRequest) => {
 
 export const DELETE = async (request: NextRequest) => {
   try {
+    const ip = getClientIp(request.headers) ?? 'unknown';
+    const { success } = await rateLimit({ prefix: 'upload:delete', identifier: ip, requests: 20, window: '60 s' });
+    if (!success) {
+      return NextResponse.json({ message: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

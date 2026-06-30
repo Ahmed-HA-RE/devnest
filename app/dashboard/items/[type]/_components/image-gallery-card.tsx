@@ -42,7 +42,7 @@ const ImageGalleryCard = ({
               alt={item.fileName ?? item.title}
               width={640}
               height={360}
-              loading='eager'
+
               className='aspect-video w-full rounded-t-xl object-cover transition-transform duration-300 ease-in-out group-hover:scale-110'
             />
           ) : (
