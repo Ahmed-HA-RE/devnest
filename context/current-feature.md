@@ -2,20 +2,12 @@
 
 <!-- Feature name -->
 
-Refactor — Quick Wins
-
 <!-- Feature Description -->
-
-Targeted fixes from a full codebase audit: rate limiting on the upload endpoint and lazy loading on image gallery cards.
 
 <!-- Goals -->
 
-- Add rate limiting to `POST /api/upload` (10 req/60s) and `DELETE /api/upload` (20 req/60s) to prevent cost-amplification via Cloudinary quota abuse
-- Remove `loading='eager'` from `ImageGalleryCard` to restore Next.js default lazy loading and reduce initial page weight for large image libraries
-
 <!-- Status -->
 
-Completed
 
 <!-- History -->
 
