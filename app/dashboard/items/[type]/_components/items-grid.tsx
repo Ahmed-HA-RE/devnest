@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getIcon } from '@/components/icon-map';
 import EmptyState from '@/components/shared/empty-state';
 import { prisma } from '@/lib/db';
+import FileListClient from './file-list-client';
 import ImageGalleryClient from './image-gallery-client';
 import ItemsGridClient from './items-grid-client';
 
@@ -47,6 +48,28 @@ const ItemsGrid = async ({
 
     if (images.length === 0) return emptyState;
     return <ImageGalleryClient items={images} />;
+  }
+
+  if (type === 'file') {
+    const files = await prisma.item.findMany({
+      where: { userId, typeId: itemType.id },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        fileUrl: true,
+        fileName: true,
+        fileSize: true,
+        isPinned: true,
+        isFavorite: true,
+        createdAt: true,
+        type: { select: { name: true, color: true } },
+      },
+    });
+
+    if (files.length === 0) return emptyState;
+    return <FileListClient items={files} />;
   }
 
   const items = await prisma.item.findMany({

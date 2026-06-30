@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import ItemsGrid from './_components/items-grid';
 import ItemsGridSkeleton, {
+  FileListGridSkeleton,
   ImageGalleryGridSkeleton,
 } from './_components/items-grid-skeleton';
 
@@ -37,7 +38,13 @@ const ItemTypePage = async ({ params }: ItemTypePageProps) => {
   const { type } = await params;
   const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}s`;
   const fallback =
-    type === 'image' ? <ImageGalleryGridSkeleton /> : <ItemsGridSkeleton />;
+    type === 'image' ? (
+      <ImageGalleryGridSkeleton />
+    ) : type === 'file' ? (
+      <FileListGridSkeleton />
+    ) : (
+      <ItemsGridSkeleton />
+    );
 
   return (
     <div className='flex flex-col gap-6'>
