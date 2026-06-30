@@ -1,23 +1,12 @@
 # Current Feature
 
 <!-- Feature name -->
-File & Image Upload
 
 <!-- Feature Description -->
-Implement file and image upload using Cloudinary when the user selects item type "File" or "Image" during item creation or editing. Users can preview the uploaded file/image and download it from the item drawer.
 
 <!-- Goals -->
-1. Create API route in `@/app/api` for uploading or deleting file/image from Cloudinary.
-2. Set up Cloudinary with helper functions (`uploadImage()`, `deleteFile()`) in `@/lib/cloudinary.ts`.
-3. Add a download button in the item drawer for file/image items using `IoMdDownload` from react-icons.
-4. Implement authentication and authorization for the API routes.
-5. Implement a drag-and-drop upload component with title "Upload your file/image", subtitle showing allowed extensions + max size, and an `IoIosCloudDownload` icon.
-6. Show a toast on successful upload or error on failure.
-7. Allowed types: File (.pdf, .docx, .xlsx, .txt — 5 MB), Image (.jpg, .jpeg, .png, .webp — 10 MB).
 
 <!-- Status -->
-Completed
-
 
 <!-- History -->
 
