@@ -5,7 +5,9 @@ import { Suspense } from 'react';
 
 import { auth } from '@/lib/auth';
 import ItemsGrid from './_components/items-grid';
-import ItemsGridSkeleton from './_components/items-grid-skeleton';
+import ItemsGridSkeleton, {
+  ImageGalleryGridSkeleton,
+} from './_components/items-grid-skeleton';
 
 type ItemTypePageProps = {
   params: Promise<{ type: string }>;
@@ -34,6 +36,8 @@ const ItemTypePage = async ({ params }: ItemTypePageProps) => {
 
   const { type } = await params;
   const label = `${type.charAt(0).toUpperCase()}${type.slice(1)}s`;
+  const fallback =
+    type === 'image' ? <ImageGalleryGridSkeleton /> : <ItemsGridSkeleton />;
 
   return (
     <div className='flex flex-col gap-6'>
@@ -43,7 +47,7 @@ const ItemTypePage = async ({ params }: ItemTypePageProps) => {
           Browse your {label.toLowerCase()}
         </p>
       </div>
-      <Suspense fallback={<ItemsGridSkeleton />}>
+      <Suspense fallback={fallback}>
         <ItemsGrid userId={session.user.id} type={type} />
       </Suspense>
     </div>
