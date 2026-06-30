@@ -22,10 +22,12 @@ import { updateItemAction } from '@/lib/actions/dashboard/update-item-action';
 import type { ItemDetail } from '@/lib/actions/dashboard/get-items-action';
 import {
   CONTENT_TYPES,
+  FILE_UPLOAD_TYPES,
   LANGUAGE_TYPES,
   MARKDOWN_TYPES,
 } from '@/lib/constants/type';
 import CodeEditor from './code-editor';
+import FileUpload from './file-upload';
 import MarkdownEditor from './markdown-editor';
 
 type ItemEditFormValues = {
@@ -34,6 +36,9 @@ type ItemEditFormValues = {
   content: string;
   language: string;
   url: string;
+  fileUrl: string;
+  fileName: string;
+  fileSize: number | null;
   tagsInput: string;
 };
 
@@ -51,11 +56,13 @@ const ItemEditForm = ({
   const showLanguage = LANGUAGE_TYPES.includes(item.type.name);
   const showMarkdown = MARKDOWN_TYPES.includes(item.type.name);
   const showUrl = item.type.name === 'link';
+  const showFileUpload = FILE_UPLOAD_TYPES.includes(item.type.name);
 
   const {
     control,
     handleSubmit,
     watch,
+    setValue,
     formState: { isSubmitting },
   } = useForm<ItemEditFormValues>({
     defaultValues: {
@@ -64,6 +71,9 @@ const ItemEditForm = ({
       content: item.content ?? '',
       language: item.language ?? '',
       url: item.url ?? '',
+      fileUrl: item.fileUrl ?? '',
+      fileName: item.fileName ?? '',
+      fileSize: item.fileSize ?? null,
       tagsInput: item.tags.map(({ tag }) => tag.name).join(', '),
     },
   });
@@ -84,6 +94,9 @@ const ItemEditForm = ({
       content: showContent ? values.content || null : null,
       language: showLanguage ? values.language || null : null,
       url: showUrl ? values.url || null : null,
+      fileUrl: showFileUpload ? values.fileUrl || null : null,
+      fileName: showFileUpload ? values.fileName || null : null,
+      fileSize: showFileUpload ? values.fileSize : null,
       tags,
     });
 
@@ -159,6 +172,28 @@ const ItemEditForm = ({
             </Field>
           )}
         />
+
+        {showFileUpload && (
+          <Controller
+            name='fileUrl'
+            control={control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel>File</FieldLabel>
+                <FileUpload
+                  itemType={item.type.name as 'file' | 'image'}
+                  currentFileUrl={field.value || null}
+                  currentFileName={watch('fileName') || null}
+                  onUploaded={({ url, fileName, fileSize }) => {
+                    field.onChange(url);
+                    setValue('fileName', fileName);
+                    setValue('fileSize', fileSize);
+                  }}
+                />
+              </Field>
+            )}
+          />
+        )}
 
         {showContent && (
           <Controller

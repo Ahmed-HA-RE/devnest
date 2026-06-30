@@ -32,8 +32,25 @@ const baseInput: CreateTypeSchema = {
   content: 'console.log(1)',
   url: null,
   language: 'typescript',
+  fileUrl: null,
+  fileName: null,
+  fileSize: null,
   tags: ['react', 'hooks'],
 };
+
+const makeTx = (overrides: Record<string, unknown> = {}) => ({
+  itemType: {
+    findFirst: vi.fn().mockResolvedValue({ id: 'type-snippet' }),
+  },
+  tag: {
+    findMany: vi.fn().mockResolvedValue([{ id: 'tag-react', name: 'react' }]),
+    createMany: vi.fn().mockResolvedValue({ count: 1 }),
+  },
+  item: {
+    create: vi.fn().mockResolvedValue({ id: 'item-1' }),
+  },
+  ...overrides,
+});
 
 describe('createTypeAction', () => {
   beforeEach(() => {
@@ -78,6 +95,34 @@ describe('createTypeAction', () => {
     expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 
+  it('returns a validation error when type is file without a fileUrl', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+
+    const result = await createTypeAction({
+      ...baseInput,
+      type: 'file',
+      fileUrl: null,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('File is required');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('returns a validation error when type is image without a fileUrl', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+
+    const result = await createTypeAction({
+      ...baseInput,
+      type: 'image',
+      fileUrl: null,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('File is required');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
   it('returns "Item type not found" when the type lookup fails inside the transaction', async () => {
     (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
     (prisma.$transaction as Mock).mockImplementation(async (callback) => {
@@ -94,26 +139,89 @@ describe('createTypeAction', () => {
     });
   });
 
+  it('creates a text item with contentType "text" and no fileUrl', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const tx = makeTx();
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await createTypeAction(baseInput);
+
+    expect(tx.item.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          contentType: 'text',
+          fileUrl: null,
+          fileName: null,
+          fileSize: null,
+        }),
+      }),
+    );
+  });
+
+  it('creates a file item with contentType "file" and stores fileUrl/fileName/fileSize', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const tx = makeTx({
+      itemType: {
+        findFirst: vi.fn().mockResolvedValue({ id: 'type-file' }),
+      },
+    });
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    const result = await createTypeAction({
+      ...baseInput,
+      type: 'file',
+      content: null,
+      language: null,
+      fileUrl: 'https://res.cloudinary.com/test/raw/upload/v1/devnest/files/uuid.pdf',
+      fileName: 'report.pdf',
+      fileSize: 102400,
+    });
+
+    expect(tx.item.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          contentType: 'file',
+          content: null,
+          fileUrl: 'https://res.cloudinary.com/test/raw/upload/v1/devnest/files/uuid.pdf',
+          fileName: 'report.pdf',
+          fileSize: 102400,
+        }),
+      }),
+    );
+    expect(revalidatePath).toHaveBeenCalledWith('/dashboard/items/file');
+    expect(result.success).toBe(true);
+  });
+
+  it('creates an image item with contentType "file"', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const tx = makeTx({
+      itemType: {
+        findFirst: vi.fn().mockResolvedValue({ id: 'type-image' }),
+      },
+    });
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await createTypeAction({
+      ...baseInput,
+      type: 'image',
+      content: null,
+      language: null,
+      fileUrl: 'https://res.cloudinary.com/test/image/upload/v1/devnest/uuid.jpg',
+      fileName: 'photo.jpg',
+      fileSize: 512000,
+    });
+
+    expect(tx.item.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ contentType: 'file' }),
+      }),
+    );
+  });
+
   it('creates only missing tags and the item, then revalidates', async () => {
     (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
-
-    const tx = {
-      itemType: {
-        findFirst: vi.fn().mockResolvedValue({ id: 'type-snippet' }),
-      },
-      tag: {
-        findMany: vi
-          .fn()
-          .mockResolvedValue([{ id: 'tag-react', name: 'react' }]),
-        createMany: vi.fn().mockResolvedValue({ count: 1 }),
-      },
-      item: {
-        create: vi.fn().mockResolvedValue({ id: 'item-1' }),
-      },
-    };
-    (prisma.$transaction as Mock).mockImplementation((callback) =>
-      callback(tx),
-    );
+    const tx = makeTx();
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
 
     const result = await createTypeAction(baseInput);
 
@@ -147,11 +255,7 @@ describe('createTypeAction', () => {
 
   it('skips tag.createMany when every tag already exists', async () => {
     (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
-
-    const tx = {
-      itemType: {
-        findFirst: vi.fn().mockResolvedValue({ id: 'type-snippet' }),
-      },
+    const tx = makeTx({
       tag: {
         findMany: vi.fn().mockResolvedValue([
           { id: 'tag-react', name: 'react' },
@@ -159,11 +263,8 @@ describe('createTypeAction', () => {
         ]),
         createMany: vi.fn(),
       },
-      item: { create: vi.fn().mockResolvedValue({ id: 'item-1' }) },
-    };
-    (prisma.$transaction as Mock).mockImplementation((callback) =>
-      callback(tx),
-    );
+    });
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
 
     await createTypeAction(baseInput);
 

@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
+import { deleteCloudinaryFile, extractPublicId } from '@/lib/cloudinary';
 import { prisma } from '@/lib/db';
 import type { EditTypeSchema } from '@/schema/dashboard';
 import { updateItemAction } from './update-item-action';
@@ -13,6 +14,11 @@ vi.mock('@/lib/auth', () => ({
 
 vi.mock('@/lib/db', () => ({
   prisma: { $transaction: vi.fn() },
+}));
+
+vi.mock('@/lib/cloudinary', () => ({
+  deleteCloudinaryFile: vi.fn().mockResolvedValue(undefined),
+  extractPublicId: vi.fn((url: string) => `extracted:${url}`),
 }));
 
 vi.mock('next/headers', () => ({
@@ -31,8 +37,25 @@ const baseInput: EditTypeSchema = {
   content: null,
   url: null,
   language: null,
+  fileUrl: null,
+  fileName: null,
+  fileSize: null,
   tags: ['react', 'hooks'],
 };
+
+const makeTextTx = () => ({
+  item: {
+    findFirst: vi
+      .fn()
+      .mockResolvedValue({ type: { name: 'snippet' }, fileUrl: null }),
+    update: vi.fn().mockResolvedValue({ id: 'item-1' }),
+  },
+  tag: {
+    findMany: vi.fn().mockResolvedValue([{ id: 'tag-react', name: 'react' }]),
+    createMany: vi.fn().mockResolvedValue({ count: 1 }),
+  },
+  itemTag: { deleteMany: vi.fn().mockResolvedValue({ count: 2 }) },
+});
 
 describe('updateItemAction', () => {
   beforeEach(() => {
@@ -84,21 +107,8 @@ describe('updateItemAction', () => {
 
   it('creates only missing tags, replaces ItemTag links, and updates the item', async () => {
     (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
-
-    const tx = {
-      item: {
-        findFirst: vi.fn().mockResolvedValue({ type: { name: 'snippet' } }),
-        update: vi.fn().mockResolvedValue({ id: 'item-1' }),
-      },
-      tag: {
-        findMany: vi.fn().mockResolvedValue([{ id: 'tag-react', name: 'react' }]),
-        createMany: vi.fn().mockResolvedValue({ count: 1 }),
-      },
-      itemTag: { deleteMany: vi.fn().mockResolvedValue({ count: 2 }) },
-    };
-    (prisma.$transaction as Mock).mockImplementation((callback) =>
-      callback(tx),
-    );
+    const tx = makeTextTx();
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
 
     const result = await updateItemAction('item-1', baseInput);
 
@@ -130,12 +140,8 @@ describe('updateItemAction', () => {
 
   it('skips tag.createMany when every tag already exists', async () => {
     (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
-
     const tx = {
-      item: {
-        findFirst: vi.fn().mockResolvedValue({ type: { name: 'snippet' } }),
-        update: vi.fn().mockResolvedValue({ id: 'item-1' }),
-      },
+      ...makeTextTx(),
       tag: {
         findMany: vi.fn().mockResolvedValue([
           { id: 'tag-react', name: 'react' },
@@ -143,15 +149,131 @@ describe('updateItemAction', () => {
         ]),
         createMany: vi.fn(),
       },
-      itemTag: { deleteMany: vi.fn().mockResolvedValue({ count: 0 }) },
     };
-    (prisma.$transaction as Mock).mockImplementation((callback) =>
-      callback(tx),
-    );
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
 
     await updateItemAction('item-1', baseInput);
 
     expect(tx.tag.createMany).not.toHaveBeenCalled();
+  });
+
+  it('deletes old Cloudinary file when a file item is updated with a new fileUrl', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const oldUrl = 'https://res.cloudinary.com/test/raw/upload/v1/devnest/files/old.pdf';
+    const newUrl = 'https://res.cloudinary.com/test/raw/upload/v1/devnest/files/new.pdf';
+
+    const tx = {
+      item: {
+        findFirst: vi.fn().mockResolvedValue({
+          type: { name: 'file' },
+          fileUrl: oldUrl,
+        }),
+        update: vi.fn().mockResolvedValue({ id: 'item-1' }),
+      },
+      tag: {
+        findMany: vi.fn().mockResolvedValue([]),
+        createMany: vi.fn(),
+      },
+      itemTag: { deleteMany: vi.fn() },
+    };
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await updateItemAction('item-1', {
+      ...baseInput,
+      fileUrl: newUrl,
+      fileName: 'new.pdf',
+      fileSize: 204800,
+      tags: [],
+    });
+
+    expect(extractPublicId).toHaveBeenCalledWith(oldUrl);
+    expect(deleteCloudinaryFile).toHaveBeenCalledWith(
+      `extracted:${oldUrl}`,
+      'raw',
+    );
+  });
+
+  it('deletes old Cloudinary file with resource_type "image" for image items', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const oldUrl = 'https://res.cloudinary.com/test/image/upload/v1/devnest/old.jpg';
+    const newUrl = 'https://res.cloudinary.com/test/image/upload/v1/devnest/new.jpg';
+
+    const tx = {
+      item: {
+        findFirst: vi.fn().mockResolvedValue({
+          type: { name: 'image' },
+          fileUrl: oldUrl,
+        }),
+        update: vi.fn().mockResolvedValue({ id: 'item-1' }),
+      },
+      tag: {
+        findMany: vi.fn().mockResolvedValue([]),
+        createMany: vi.fn(),
+      },
+      itemTag: { deleteMany: vi.fn() },
+    };
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await updateItemAction('item-1', {
+      ...baseInput,
+      fileUrl: newUrl,
+      fileName: 'new.jpg',
+      fileSize: 512000,
+      tags: [],
+    });
+
+    expect(deleteCloudinaryFile).toHaveBeenCalledWith(expect.any(String), 'image');
+  });
+
+  it('does not call Cloudinary when fileUrl is unchanged', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const sameUrl = 'https://res.cloudinary.com/test/raw/upload/v1/devnest/files/same.pdf';
+
+    const tx = {
+      item: {
+        findFirst: vi.fn().mockResolvedValue({
+          type: { name: 'file' },
+          fileUrl: sameUrl,
+        }),
+        update: vi.fn().mockResolvedValue({ id: 'item-1' }),
+      },
+      tag: { findMany: vi.fn().mockResolvedValue([]), createMany: vi.fn() },
+      itemTag: { deleteMany: vi.fn() },
+    };
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await updateItemAction('item-1', {
+      ...baseInput,
+      fileUrl: sameUrl,
+      tags: [],
+    });
+
+    expect(deleteCloudinaryFile).not.toHaveBeenCalled();
+  });
+
+  it('succeeds even when the old Cloudinary file deletion fails (non-fatal)', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const tx = {
+      item: {
+        findFirst: vi.fn().mockResolvedValue({
+          type: { name: 'file' },
+          fileUrl: 'https://res.cloudinary.com/test/raw/upload/v1/devnest/old.pdf',
+        }),
+        update: vi.fn().mockResolvedValue({ id: 'item-1' }),
+      },
+      tag: { findMany: vi.fn().mockResolvedValue([]), createMany: vi.fn() },
+      itemTag: { deleteMany: vi.fn() },
+    };
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+    (deleteCloudinaryFile as Mock).mockRejectedValue(new Error('Cloudinary down'));
+
+    const result = await updateItemAction('item-1', {
+      ...baseInput,
+      fileUrl: 'https://res.cloudinary.com/test/raw/upload/v1/devnest/new.pdf',
+      tags: [],
+    });
+
+    expect(result.success).toBe(true);
   });
 
   it('returns a generic error message when the transaction throws', async () => {

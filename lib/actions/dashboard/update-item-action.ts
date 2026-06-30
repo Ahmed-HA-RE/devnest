@@ -5,6 +5,12 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
+import {
+  deleteCloudinaryFile,
+  extractPublicId,
+  type CloudinaryResourceType,
+} from '@/lib/cloudinary';
+import { FILE_UPLOAD_TYPES } from '@/lib/constants/type';
 import { prisma } from '@/lib/db';
 import { editTypeSchema, type EditTypeSchema } from '@/schema/dashboard';
 
@@ -28,17 +34,32 @@ export const updateItemAction = async (
       throw new Error(message);
     }
 
-    const { title, description, content, url, language, tags } = parsed.data;
+    const {
+      title,
+      description,
+      content,
+      url,
+      language,
+      fileUrl,
+      fileName,
+      fileSize,
+      tags,
+    } = parsed.data;
 
     const result = await prisma.$transaction(async (tx) => {
       const existingItem = await tx.item.findFirst({
         where: { id: itemId, userId: session.user.id },
-        select: { type: { select: { name: true } } },
+        select: {
+          type: { select: { name: true } },
+          fileUrl: true,
+        },
       });
 
       if (!existingItem) {
         return null;
       }
+
+      const isFileType = FILE_UPLOAD_TYPES.includes(existingItem.type.name);
 
       const existingTags = await tx.tag.findMany({
         where: { userId: session.user.id, name: { in: tags } },
@@ -62,9 +83,12 @@ export const updateItemAction = async (
         data: {
           title,
           description: description ?? null,
-          content: content ?? null,
+          content: isFileType ? null : (content ?? null),
           url: url ?? null,
           language: language ?? null,
+          fileUrl: isFileType ? (fileUrl ?? null) : null,
+          fileName: isFileType ? (fileName ?? null) : null,
+          fileSize: isFileType ? (fileSize ?? null) : null,
           tags: {
             create: tags.map((name) => ({ tagId: tagIdByName.get(name)! })),
           },
@@ -76,18 +100,37 @@ export const updateItemAction = async (
         },
       });
 
-      return { typeName: existingItem.type.name, updatedItem };
+      return {
+        typeName: existingItem.type.name,
+        oldFileUrl: existingItem.fileUrl,
+        updatedItem,
+      };
     });
 
     if (!result) {
       return { success: false, data: null, message: 'Item not found' };
     }
 
+    // Delete old Cloudinary file after successful DB update if file was replaced
+    const { oldFileUrl, updatedItem, typeName } = result;
+    if (
+      FILE_UPLOAD_TYPES.includes(typeName) &&
+      oldFileUrl &&
+      fileUrl &&
+      oldFileUrl !== fileUrl
+    ) {
+      const resourceType: CloudinaryResourceType =
+        typeName === 'image' ? 'image' : 'raw';
+      await deleteCloudinaryFile(extractPublicId(oldFileUrl), resourceType).catch(
+        () => {/* non-fatal — old file stays in Cloudinary but DB is correct */},
+      );
+    }
+
     revalidatePath(`/dashboard/items/${result.typeName}`);
 
     return {
       success: true,
-      data: result.updatedItem,
+      data: updatedItem,
       message: 'Item updated successfully',
     };
   } catch (error) {

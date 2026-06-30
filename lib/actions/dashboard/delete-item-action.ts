@@ -4,6 +4,12 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
+import {
+  deleteCloudinaryFile,
+  extractPublicId,
+  type CloudinaryResourceType,
+} from '@/lib/cloudinary';
+import { FILE_UPLOAD_TYPES } from '@/lib/constants/type';
 import { prisma } from '@/lib/db';
 
 export const deleteItemAction = async (itemId: string) => {
@@ -16,7 +22,10 @@ export const deleteItemAction = async (itemId: string) => {
 
     const existingItem = await prisma.item.findFirst({
       where: { id: itemId, userId: session.user.id },
-      select: { type: { select: { name: true } } },
+      select: {
+        type: { select: { name: true } },
+        fileUrl: true,
+      },
     });
 
     if (!existingItem) {
@@ -24,6 +33,19 @@ export const deleteItemAction = async (itemId: string) => {
     }
 
     await prisma.item.delete({ where: { id: itemId } });
+
+    // Delete from Cloudinary after successful DB delete
+    if (
+      FILE_UPLOAD_TYPES.includes(existingItem.type.name) &&
+      existingItem.fileUrl
+    ) {
+      const resourceType: CloudinaryResourceType =
+        existingItem.type.name === 'image' ? 'image' : 'raw';
+      await deleteCloudinaryFile(
+        extractPublicId(existingItem.fileUrl),
+        resourceType,
+      ).catch(() => {/* non-fatal */});
+    }
 
     revalidatePath(`/dashboard/items/${existingItem.type.name}`);
 
