@@ -1,20 +1,12 @@
 # Current Feature
 
 <!-- Feature name -->
-Files Type UI Display
 
 <!-- Feature Description -->
-Change the file type card to a 1-column layout that includes more detailed information about the file.
 
 <!-- Goals -->
-- Add a `<FaFileAlt />` icon (react-icons) and display detailed file data: title, description, fileSize, and createdAt
-- Add a download button using the shadcn `Button` component with `size="icon"` containing a `<FaDownload />` icon (react-icons)
-- Wrap an `<a>` anchor tag (that triggers the file download) around the icon Button
-- Responsive: stack info vertically on mobile
-- Close UI design inspired by Dropbox
 
 <!-- Status -->
-Completed
 
 
 <!-- History -->
