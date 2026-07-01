@@ -37,15 +37,14 @@ export const createTypeSchema = editTypeSchema
     path: ['url'],
   })
   .refine(
-    (data) =>
-      !['file', 'image'].includes(data.type) || !!data.fileUrl?.trim(),
+    (data) => !['file', 'image'].includes(data.type) || !!data.fileUrl?.trim(),
     {
       message: 'File is required',
       path: ['fileUrl'],
     },
   );
 
-export type CreateTypeSchema = z.infer<typeof createTypeSchema>;
+export type CreateTypeSchema = z.input<typeof createTypeSchema>;
 
 export const createCollectionSchema = z.object({
   title: z

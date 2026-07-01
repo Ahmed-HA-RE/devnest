@@ -159,7 +159,7 @@ const AppSidebar = async () => {
           <div className='flex items-center justify-between'>
             <SidebarGroupLabel>Collections</SidebarGroupLabel>
             <Link
-              href='/collections'
+              href='/dashboard/collections'
               className='text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:hidden mr-2'
             >
               View all
@@ -171,7 +171,7 @@ const AppSidebar = async () => {
                 return (
                   <SidebarMenuItem key={collection.id}>
                     <SidebarMenuButton asChild tooltip={collection.name}>
-                      <Link href={`/collections/${collection.id}`}>
+                      <Link href={`/dashboard/collections/${collection.id}`}>
                         <FaRegFolderOpen />
                         <span>{collection.name}</span>
                         <span className='ml-auto text-xs text-muted-foreground'>

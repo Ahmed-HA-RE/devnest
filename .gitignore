@@ -50,5 +50,8 @@ next-env.d.ts
 # screenshots
 /context/screenshots
 
+# Specs
+/context/specs
+
 # playwright 
 .playwright-mcp

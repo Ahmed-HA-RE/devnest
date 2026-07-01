@@ -1,12 +1,21 @@
 # Current Feature
 
 <!-- Feature name -->
+Collections Routes
 
 <!-- Feature Description -->
+Add two new dashboard routes for browsing collections: a `/dashboard/collections` index page listing all the user's collections, and a `/dashboard/collections/[id]` detail page showing the items inside a specific collection. Update existing sidebar links and the dashboard home "View all" link to point to the new routes, and make every collection card clickable so it navigates to its detail page.
 
 <!-- Goals -->
+- Create `/dashboard/collections` page that fetches and displays all collections as clickable `CollectionCard` links (border colored by primary item type)
+- Create `/dashboard/collections/[id]` page with folder icon + collection name on the left and total item count on the right; items grouped by type: Images section using `ImageGalleryClient`, Files section using `FileListClient`, all other types in a standard `ItemsGridClient` grid
+- Update the "View all collections" link in the sidebar (`app-sidebar.tsx`) from `/collections` to `/dashboard/collections`
+- Update per-collection links in the sidebar from `/collections/${id}` to `/dashboard/collections/${id}`
+- Update the "View all" link in `recent-collections.tsx` from `/collections` to `/dashboard/collections`
+- Make every collection card on the dashboard home page link to `/dashboard/collections/${id}`
 
 <!-- Status -->
+Completed
 
 
 <!-- History -->
@@ -46,3 +55,4 @@
 - 2026-06-30: Implemented Quick Wins (Refactor) — applied two targeted fixes from a codebase audit. Added rate limiting to `app/api/upload/route.ts`: POST throttled at 10 req/60s and DELETE at 20 req/60s using the existing `rateLimit()` helper and `getClientIp(request.headers)`, matching the auth route pattern; prevents cost-amplification attacks on Cloudinary quota. Removed `loading='eager'` from `ImageGalleryCard` (`app/dashboard/items/[type]/_components/image-gallery-card.tsx`) to restore `next/image` default lazy loading, avoiding eager fetch of all below-the-fold thumbnails on page load. `tsc --noEmit` clean.
 - 2026-07-01: Implemented Create New Collection — added `createCollectionSchema`/`CreateCollectionSchema` to `schema/dashboard.ts` (title min 3 chars, description min 10 chars, both required). Added `createCollectionAction` (`lib/actions/dashboard/create-collection-action.ts`) with session auth, `safeParse` validation (joining error messages with `, `), and `prisma.collection.create`, revalidating `/dashboard`. Built `CreateCollectionDialog` (`app/dashboard/_components/create-collection-dialog.tsx`) as a client component with `react-hook-form` + `zodResolver`, Title and Description fields with inline `FieldError`, and a Spinner/"Create Collection" submit button. Replaced the static "New Collection" button in `topbar.tsx` with the new dialog trigger. Added a Vitest suite (`create-collection-action.test.ts`, 5 tests) covering unauthorized, title-too-short, description-too-short, success with revalidation, and DB error paths. Applied formatting and ring-width cleanup to `components/ui/textarea.tsx`. All 34 tests passing.
 - 2026-07-01: Implemented Select Collections — added a many-to-many `Collection ↔ Item` relation to the Prisma schema with a new migration. Created `getCollectionsAction` (`lib/actions/dashboard/get-collections-action.ts`) returning the latest 10 collections with optional case-insensitive search. Built `useCollections` TanStack Query hook (`hooks/use-collections.ts`) gated by `enabled` (only active when the combobox popover is open, or when search.length === 0 or > 2). Built `CollectionCombobox` (`components/shared/collection-combobox.tsx`) using shadcn `Command`/`Popover` — shows the 10 most-recent collections by default, searches dynamically when the user types, renders a loading skeleton while fetching, and displays selected collections as dismissible badges. Wired the combobox into `CreateTypeDialog` and `ItemEditForm` via a `collectionIds` field added to `editTypeSchema`/`createTypeSchema`. Updated `getItemAction` and `ItemDrawer` to include and display collections. Added `get-collections-action.test.ts` (4 tests: unauthorized/no-search/search/DB-error) and extended `create-type-action` and `update-item-action` test suites with `collectionIds` coverage. All 40 tests passing.
+- 2026-07-01: Implemented Collections Routes — added `/dashboard/collections` index page showing all user collections as `CollectionCard` links (border-left colored by primary item type, with item count and type icons), and `/dashboard/collections/[id]` detail page with a folder icon + collection name on the left and total item count on the right; items are grouped by type: Images section using `ImageGalleryClient`, Files section using `FileListClient`, all other types in a standard `ItemsGridClient` grid. Extracted a shared `CollectionCard` component (`components/shared/collection-card.tsx`) reused by both the dashboard home's `recent-collections.tsx` and the new index page. Updated the sidebar "View all collections" link and all per-collection sidebar links from `/collections/*` to `/dashboard/collections/*`; also fixed the "View all" link in `recent-collections.tsx`. Each route has its own `<Suspense>` boundary with matching skeletons. Build passes.

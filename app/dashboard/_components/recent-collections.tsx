@@ -1,16 +1,14 @@
 import Link from 'next/link';
-import { FaRegFolderOpen, FaStar } from 'react-icons/fa6';
+import { FaRegFolderOpen } from 'react-icons/fa6';
 
-import { getIcon } from '@/components/icon-map';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import CollectionCard, {
+  type CollectionType,
+} from '@/components/shared/collection-card';
 import EmptyState from '@/components/shared/empty-state';
-import { getBorderColor, getTextColor } from '@/lib/colors';
 import { prisma } from '@/lib/db';
-import { cn } from '@/lib/utils';
 
 const RECENT_COLLECTIONS_COUNT = 6;
 
-type CollectionType = { id: string; name: string; color: string | null };
 type CollectionTypeCount = { type: CollectionType; count: number };
 
 // Returns the distinct item types in a collection and the most-used one.
@@ -64,7 +62,7 @@ const RecentCollections = async ({ userId }: { userId: string }) => {
           Recent Collections
         </h3>
         <Link
-          href='/collections'
+          href='/dashboard/collections'
           className='text-sm text-muted-foreground hover:text-foreground'
         >
           View all
@@ -83,56 +81,17 @@ const RecentCollections = async ({ userId }: { userId: string }) => {
               typeCountsByCollection.get(collection.id) ?? [],
             );
 
-            const { className: borderClassName, style: borderStyle } =
-              getBorderColor(primaryType?.color ?? undefined);
-
             return (
-              <Card
+              <CollectionCard
                 key={collection.id}
-                className={cn('border-l-4', borderClassName)}
-                style={borderStyle}
-              >
-                <CardHeader className='flex-row items-center justify-between'>
-                  <div className='flex items-center gap-2'>
-                    <FaRegFolderOpen />
-                    <span className='font-medium'>{collection.name}</span>
-                    {collection.isFavorite && (
-                      <FaStar className='size-3 text-yellow-500' />
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className='text-sm text-muted-foreground'>
-                    {collection._count.items}{' '}
-                    {collection._count.items === 1 ? 'item' : 'items'}
-                  </p>
-                  {collection.description && (
-                    <p className='mt-1 text-sm text-muted-foreground'>
-                      {collection.description}
-                    </p>
-                  )}
-                  {types.length > 0 && (
-                    <div className='mt-3 flex gap-2'>
-                      {types.map((type) => {
-                        const TypeIcon = getIcon(type.name);
-                        const { className, style } = getTextColor(
-                          type.color ?? undefined,
-                        );
-                        return (
-                          <TypeIcon
-                            key={type.id}
-                            className={cn(
-                              'size-4 text-muted-foreground',
-                              className,
-                            )}
-                            style={style}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                id={collection.id}
+                name={collection.name}
+                isFavorite={collection.isFavorite}
+                description={collection.description}
+                itemCount={collection._count.items}
+                types={types}
+                primaryType={primaryType}
+              />
             );
           })}
         </div>
