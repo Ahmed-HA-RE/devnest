@@ -44,6 +44,7 @@ export const updateItemAction = async (
       fileName,
       fileSize,
       tags,
+      collectionIds,
     } = parsed.data;
 
     const result = await prisma.$transaction(async (tx) => {
@@ -89,6 +90,9 @@ export const updateItemAction = async (
           fileUrl: isFileType ? (fileUrl ?? null) : null,
           fileName: isFileType ? (fileName ?? null) : null,
           fileSize: isFileType ? (fileSize ?? null) : null,
+          collections: {
+            set: collectionIds.map((id) => ({ id })),
+          },
           tags: {
             create: tags.map((name) => ({ tagId: tagIdByName.get(name)! })),
           },
@@ -96,7 +100,7 @@ export const updateItemAction = async (
         include: {
           type: { select: { name: true, color: true } },
           tags: { include: { tag: { select: { name: true } } } },
-          collection: { select: { name: true } },
+          collections: { select: { id: true, name: true } },
         },
       });
 

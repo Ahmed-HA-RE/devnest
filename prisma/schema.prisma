@@ -85,31 +85,29 @@ model Verification {
 // ─────────────────────────────────────────────
 
 model Item {
-  id           String      @id @default(uuid())
-  title        String
-  contentType  String // "text" | "file"
-  content      String? // text-based items only
-  fileUrl      String?
-  fileName     String?
-  fileSize     Int?
-  url          String?
-  description  String?
-  language     String? // syntax highlighting hint
-  isFavorite   Boolean     @default(false)
-  isPinned     Boolean     @default(false)
-  userId       String
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  typeId       String
-  type         ItemType    @relation(fields: [typeId], references: [id], onDelete: Cascade)
-  collectionId String?
-  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
-  tags         ItemTag[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id          String       @id @default(uuid())
+  title       String
+  contentType String // "text" | "file"
+  content     String? // text-based items only
+  fileUrl     String?
+  fileName    String?
+  fileSize    Int?
+  url         String?
+  description String?
+  language    String? // syntax highlighting hint
+  isFavorite  Boolean      @default(false)
+  isPinned    Boolean      @default(false)
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  typeId      String
+  type        ItemType     @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  collections Collection[]
+  tags        ItemTag[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
   @@index([userId])
   @@index([typeId])
-  @@index([collectionId])
   @@map("item")
 }
 

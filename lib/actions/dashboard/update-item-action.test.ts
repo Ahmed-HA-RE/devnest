@@ -41,6 +41,7 @@ const baseInput: EditTypeSchema = {
   fileName: null,
   fileSize: null,
   tags: ['react', 'hooks'],
+  collectionIds: [],
 };
 
 const makeTextTx = () => ({
@@ -136,6 +137,22 @@ describe('updateItemAction', () => {
     );
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard/items/snippet');
     expect(result.success).toBe(true);
+  });
+
+  it('replaces collections via set when collectionIds are provided', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const tx = makeTextTx();
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await updateItemAction('item-1', { ...baseInput, collectionIds: ['col-1', 'col-2'] });
+
+    expect(tx.item.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          collections: { set: [{ id: 'col-1' }, { id: 'col-2' }] },
+        }),
+      }),
+    );
   });
 
   it('skips tag.createMany when every tag already exists', async () => {

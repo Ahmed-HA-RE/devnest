@@ -40,23 +40,27 @@ async function main() {
     })),
   });
 
-  await prisma.item.createMany({
-    data: items.map((item) => ({
-      id: item.id,
-      title: item.title,
-      description: item.description,
-      contentType: item.contentType,
-      content: item.content,
-      language: item.language,
-      isFavorite: item.isFavorite,
-      isPinned: item.isPinned,
-      userId: currentUser.id,
-      typeId: item.typeId,
-      collectionId: item.collectionId,
-      createdAt: new Date(item.createdAt),
-      updatedAt: new Date(item.updatedAt),
-    })),
-  });
+  for (const item of items) {
+    await prisma.item.create({
+      data: {
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        contentType: item.contentType,
+        content: item.content,
+        language: item.language,
+        isFavorite: item.isFavorite,
+        isPinned: item.isPinned,
+        userId: currentUser.id,
+        typeId: item.typeId,
+        collections: {
+          connect: item.collectionIds.map((id) => ({ id })),
+        },
+        createdAt: new Date(item.createdAt),
+        updatedAt: new Date(item.updatedAt),
+      },
+    });
+  }
 
   const tagNames = [...new Set(items.flatMap((item) => item.tags))];
   const tagIds = new Map(tagNames.map((name) => [name, randomUUID()]));

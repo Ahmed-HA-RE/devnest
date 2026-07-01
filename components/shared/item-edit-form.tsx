@@ -27,6 +27,7 @@ import {
   MARKDOWN_TYPES,
 } from '@/lib/constants/type';
 import CodeEditor from './code-editor';
+import CollectionCombobox from './collection-combobox';
 import FileUpload from './file-upload';
 import MarkdownEditor from './markdown-editor';
 
@@ -40,6 +41,7 @@ type ItemEditFormValues = {
   fileName: string;
   fileSize: number | null;
   tagsInput: string;
+  collectionIds: string[];
 };
 
 const ItemEditForm = ({
@@ -75,6 +77,7 @@ const ItemEditForm = ({
       fileName: item.fileName ?? '',
       fileSize: item.fileSize ?? null,
       tagsInput: item.tags.map(({ tag }) => tag.name).join(', '),
+      collectionIds: item.collections.map((c) => c.id),
     },
   });
 
@@ -97,6 +100,7 @@ const ItemEditForm = ({
       fileName: showFileUpload ? values.fileName || null : null,
       fileSize: showFileUpload ? values.fileSize : null,
       tags,
+      collectionIds: values.collectionIds,
     });
 
     if (!result.success) {
@@ -182,6 +186,7 @@ const ItemEditForm = ({
                 <FileUpload
                   itemType={item.type.name as 'file' | 'image'}
                   currentFileUrl={field.value || null}
+                  // eslint-disable-next-line
                   currentFileName={watch('fileName') || null}
                   onUploaded={({ url, fileName, fileSize }) => {
                     field.onChange(url);
@@ -208,7 +213,10 @@ const ItemEditForm = ({
                     language={language}
                   />
                 ) : showMarkdown ? (
-                  <MarkdownEditor value={field.value} onChange={field.onChange} />
+                  <MarkdownEditor
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 ) : (
                   <Textarea
                     {...field}
@@ -272,6 +280,20 @@ const ItemEditForm = ({
           )}
         />
 
+        <Controller
+          name='collectionIds'
+          control={control}
+          render={({ field }) => (
+            <Field>
+              <FieldLabel>Collections</FieldLabel>
+              <CollectionCombobox
+                value={field.value}
+                onChange={field.onChange}
+              />
+            </Field>
+          )}
+        />
+
         <section className='grid grid-cols-2 gap-4 text-sm'>
           <div>
             <h3 className='mb-1 text-xs font-medium text-muted-foreground'>
@@ -279,12 +301,18 @@ const ItemEditForm = ({
             </h3>
             <Badge variant='secondary'>{item.type.name}</Badge>
           </div>
-          {item.collection && (
-            <div>
+          {item.collections.length > 0 && (
+            <div className='col-span-2'>
               <h3 className='mb-1 text-xs font-medium text-muted-foreground'>
-                Collection
+                Collections
               </h3>
-              <Badge variant='secondary'>{item.collection.name}</Badge>
+              <div className='flex flex-wrap gap-1'>
+                {item.collections.map((c) => (
+                  <Badge key={c.id} variant='secondary'>
+                    {c.name}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
           <div>

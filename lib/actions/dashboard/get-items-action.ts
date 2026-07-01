@@ -10,7 +10,7 @@ export type ItemDetail = Prisma.ItemGetPayload<{
   include: {
     type: { select: { name: true; color: true } };
     tags: { include: { tag: { select: { name: true } } } };
-    collection: { select: { name: true } };
+    collections: { select: { id: true; name: true } };
   };
 }>;
 
@@ -27,7 +27,7 @@ export const getItemAction = async (itemId: string) => {
       include: {
         type: { select: { name: true, color: true } },
         tags: { include: { tag: { select: { name: true } } } },
-        collection: { select: { name: true } },
+        collections: { select: { id: true, name: true } },
       },
     });
 

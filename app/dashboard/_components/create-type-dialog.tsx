@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import CollectionCombobox from '@/components/shared/collection-combobox';
 import { createTypeAction } from '@/lib/actions/dashboard/create-type-action';
 import {
   CONTENT_TYPES,
@@ -52,6 +53,7 @@ const DEFAULT_VALUES: CreateTypeSchema = {
   fileName: '',
   fileSize: null,
   tags: [],
+  collectionIds: [],
 };
 
 const CreateTypeDialog = () => {
@@ -322,6 +324,20 @@ const CreateTypeDialog = () => {
                 <small className='text-muted-foreground block text-right'>
                   Separate tags with commas
                 </small>
+              </Field>
+            )}
+          />
+
+          <Controller
+            name='collectionIds'
+            control={control}
+            render={({ field }) => (
+              <Field>
+                <FieldLabel>Collections</FieldLabel>
+                <CollectionCombobox
+                  value={field.value ?? []}
+                  onChange={field.onChange}
+                />
               </Field>
             )}
           />

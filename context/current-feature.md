@@ -1,12 +1,20 @@
 # Current Feature
 
 <!-- Feature name -->
+Select Collections
 
 <!-- Feature Description -->
+Implement a multi-select collections combobox for use when creating or updating an item. The combobox shows the latest 10 collections by default and supports a search input to find collections not in the initial list.
 
 <!-- Goals -->
+- Install and refactor the `@ss-components/combobox-11` component from shadcn-studio-mcp to fetch the latest 10 collections and search dynamically
+- Create a `getCollectionsAction` server action in `@/lib/actions/dashboard` that returns the latest 10 collections (using `take` in the Prisma query)
+- Create a TanStack Query hook in `@/hooks` (with an `enabled` param) that only fetches when the search input has more than 2 characters
+- Show a loading skeleton while fetching collections
+- Wire the combobox into both the Create Item dialog and the Edit Item drawer
 
 <!-- Status -->
+Completed
 
 
 <!-- History -->
@@ -45,3 +53,4 @@
 - 2026-06-30: Implemented Files Type UI Display — replaced the generic grid/card layout for the `file` item type with a dedicated Dropbox-inspired 1-column list. Added `FileListCard` (`app/dashboard/items/[type]/_components/file-list-card.tsx`) with a `FaFileAlt` icon box, title, description, formatted file size (B/KB/MB/GB), createdAt, and a shadcn `Button size="icon"` wrapping an `<a download>` link with `FaDownload` that stops click propagation so the card's drawer-open handler isn't triggered. Added `FileListClient` (client wrapper with selected-item state + `ItemDrawer`) and `FileListCardSkeleton`; exported `FileListGridSkeleton` from `items-grid-skeleton.tsx`. `ItemsGrid` now branches on `type === 'file'` alongside the existing `type === 'image'` branch, with a narrowed Prisma select (`id`, `title`, `description`, `fileUrl`, `fileName`, `fileSize`, `isPinned`, `isFavorite`, `createdAt`, `type`). `page.tsx` uses `FileListGridSkeleton` as the `<Suspense>` fallback for the file route. Responsive: flex-row on desktop, flex-col on mobile. Build and TypeScript clean.
 - 2026-06-30: Implemented Quick Wins (Refactor) — applied two targeted fixes from a codebase audit. Added rate limiting to `app/api/upload/route.ts`: POST throttled at 10 req/60s and DELETE at 20 req/60s using the existing `rateLimit()` helper and `getClientIp(request.headers)`, matching the auth route pattern; prevents cost-amplification attacks on Cloudinary quota. Removed `loading='eager'` from `ImageGalleryCard` (`app/dashboard/items/[type]/_components/image-gallery-card.tsx`) to restore `next/image` default lazy loading, avoiding eager fetch of all below-the-fold thumbnails on page load. `tsc --noEmit` clean.
 - 2026-07-01: Implemented Create New Collection — added `createCollectionSchema`/`CreateCollectionSchema` to `schema/dashboard.ts` (title min 3 chars, description min 10 chars, both required). Added `createCollectionAction` (`lib/actions/dashboard/create-collection-action.ts`) with session auth, `safeParse` validation (joining error messages with `, `), and `prisma.collection.create`, revalidating `/dashboard`. Built `CreateCollectionDialog` (`app/dashboard/_components/create-collection-dialog.tsx`) as a client component with `react-hook-form` + `zodResolver`, Title and Description fields with inline `FieldError`, and a Spinner/"Create Collection" submit button. Replaced the static "New Collection" button in `topbar.tsx` with the new dialog trigger. Added a Vitest suite (`create-collection-action.test.ts`, 5 tests) covering unauthorized, title-too-short, description-too-short, success with revalidation, and DB error paths. Applied formatting and ring-width cleanup to `components/ui/textarea.tsx`. All 34 tests passing.
+- 2026-07-01: Implemented Select Collections — added a many-to-many `Collection ↔ Item` relation to the Prisma schema with a new migration. Created `getCollectionsAction` (`lib/actions/dashboard/get-collections-action.ts`) returning the latest 10 collections with optional case-insensitive search. Built `useCollections` TanStack Query hook (`hooks/use-collections.ts`) gated by `enabled` (only active when the combobox popover is open, or when search.length === 0 or > 2). Built `CollectionCombobox` (`components/shared/collection-combobox.tsx`) using shadcn `Command`/`Popover` — shows the 10 most-recent collections by default, searches dynamically when the user types, renders a loading skeleton while fetching, and displays selected collections as dismissible badges. Wired the combobox into `CreateTypeDialog` and `ItemEditForm` via a `collectionIds` field added to `editTypeSchema`/`createTypeSchema`. Updated `getItemAction` and `ItemDrawer` to include and display collections. Added `get-collections-action.test.ts` (4 tests: unauthorized/no-search/search/DB-error) and extended `create-type-action` and `update-item-action` test suites with `collectionIds` coverage. All 40 tests passing.

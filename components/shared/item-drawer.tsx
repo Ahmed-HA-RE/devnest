@@ -245,12 +245,16 @@ const ItemDrawer = ({
                     </section>
                   )}
 
-                  {item.collection && (
+                  {item.collections.length > 0 && (
                     <section>
                       <h3 className='mb-1 text-sm font-medium text-muted-foreground'>
-                        Collection
+                        Collections
                       </h3>
-                      <Badge variant='secondary'>{item.collection.name}</Badge>
+                      <div className='flex flex-wrap gap-1'>
+                        {item.collections.map((c) => (
+                          <Badge key={c.id} variant='secondary'>{c.name}</Badge>
+                        ))}
+                      </div>
                     </section>
                   )}
 

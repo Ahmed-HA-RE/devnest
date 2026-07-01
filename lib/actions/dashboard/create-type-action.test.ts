@@ -36,6 +36,7 @@ const baseInput: CreateTypeSchema = {
   fileName: null,
   fileSize: null,
   tags: ['react', 'hooks'],
+  collectionIds: [],
 };
 
 const makeTx = (overrides: Record<string, unknown> = {}) => ({
@@ -251,6 +252,22 @@ describe('createTypeAction', () => {
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard');
     expect(revalidatePath).toHaveBeenCalledWith('/dashboard/items/snippet');
     expect(result.success).toBe(true);
+  });
+
+  it('connects the specified collections when collectionIds are provided', async () => {
+    (auth.api.getSession as unknown as Mock).mockResolvedValue(mockSession);
+    const tx = makeTx();
+    (prisma.$transaction as Mock).mockImplementation((callback) => callback(tx));
+
+    await createTypeAction({ ...baseInput, collectionIds: ['col-1', 'col-2'] });
+
+    expect(tx.item.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          collections: { connect: [{ id: 'col-1' }, { id: 'col-2' }] },
+        }),
+      }),
+    );
   });
 
   it('skips tag.createMany when every tag already exists', async () => {

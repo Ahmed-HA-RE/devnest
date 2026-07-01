@@ -20,6 +20,7 @@ export const editTypeSchema = z.object({
   fileName: z.string().trim().nullable().optional(),
   fileSize: z.number().nullable().optional(),
   tags: z.array(z.string().trim().min(1, 'Tag cannot be empty')),
+  collectionIds: z.array(z.string()).default([]),
 });
 
 export type EditTypeSchema = z.infer<typeof editTypeSchema>;

@@ -37,6 +37,7 @@ export const createTypeAction = async (data: CreateTypeSchema) => {
       fileName,
       fileSize,
       tags,
+      collectionIds,
     } = parsed.data;
     const userId = session.user.id;
     const isFileType = FILE_UPLOAD_TYPES.includes(type);
@@ -76,6 +77,9 @@ export const createTypeAction = async (data: CreateTypeSchema) => {
           fileName: isFileType ? (fileName ?? null) : null,
           fileSize: isFileType ? (fileSize ?? null) : null,
           contentType: isFileType ? 'file' : 'text',
+          collections: {
+            connect: collectionIds.map((id) => ({ id })),
+          },
           userId,
           typeId: itemType.id,
           tags: {
@@ -85,7 +89,7 @@ export const createTypeAction = async (data: CreateTypeSchema) => {
         include: {
           type: { select: { name: true, color: true } },
           tags: { include: { tag: { select: { name: true } } } },
-          collection: { select: { name: true } },
+          collections: { select: { id: true, name: true } },
         },
       });
 

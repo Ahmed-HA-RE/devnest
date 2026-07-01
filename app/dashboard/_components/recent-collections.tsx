@@ -36,32 +36,25 @@ const RecentCollections = async ({ userId }: { userId: string }) => {
     take: RECENT_COLLECTIONS_COUNT,
     include: {
       _count: { select: { items: true } },
+      items: {
+        select: { type: { select: { id: true, name: true, color: true } } },
+      },
     },
   });
 
-  const collectionIds = collections.map((collection) => collection.id);
-
-  const itemTypeCounts = await prisma.item.groupBy({
-    by: ['collectionId', 'typeId'],
-    where: { collectionId: { in: collectionIds } },
-    _count: { _all: true },
-  });
-
-  const types = await prisma.itemType.findMany({
-    where: { id: { in: [...new Set(itemTypeCounts.map((row) => row.typeId))] } },
-    select: { id: true, name: true, color: true },
-  });
-  const typeById = new Map(types.map((type) => [type.id, type]));
-
   const typeCountsByCollection = new Map<string, CollectionTypeCount[]>();
-  for (const row of itemTypeCounts) {
-    if (!row.collectionId) continue;
-    const type = typeById.get(row.typeId);
-    if (!type) continue;
-
-    const entries = typeCountsByCollection.get(row.collectionId) ?? [];
-    entries.push({ type, count: row._count._all });
-    typeCountsByCollection.set(row.collectionId, entries);
+  for (const collection of collections) {
+    const countMap = new Map<string, { type: CollectionType; count: number }>();
+    for (const item of collection.items) {
+      const { type } = item;
+      const entry = countMap.get(type.id);
+      if (entry) {
+        entry.count += 1;
+      } else {
+        countMap.set(type.id, { type, count: 1 });
+      }
+    }
+    typeCountsByCollection.set(collection.id, [...countMap.values()]);
   }
 
   return (
