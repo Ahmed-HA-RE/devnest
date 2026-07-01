@@ -1,20 +1,12 @@
 # Current Feature
 
 <!-- Feature name -->
-Select Collections
 
 <!-- Feature Description -->
-Implement a multi-select collections combobox for use when creating or updating an item. The combobox shows the latest 10 collections by default and supports a search input to find collections not in the initial list.
 
 <!-- Goals -->
-- Install and refactor the `@ss-components/combobox-11` component from shadcn-studio-mcp to fetch the latest 10 collections and search dynamically
-- Create a `getCollectionsAction` server action in `@/lib/actions/dashboard` that returns the latest 10 collections (using `take` in the Prisma query)
-- Create a TanStack Query hook in `@/hooks` (with an `enabled` param) that only fetches when the search input has more than 2 characters
-- Show a loading skeleton while fetching collections
-- Wire the combobox into both the Create Item dialog and the Edit Item drawer
 
 <!-- Status -->
-Completed
 
 
 <!-- History -->
