@@ -1,20 +1,12 @@
 # Current Feature
 
 <!-- Feature name -->
-Create New Collection
 
 <!-- Feature Description -->
-Allow users to create a new collection by clicking the "New Collection" button in the top bar, which opens a shadcn dialog with a title and description form.
 
 <!-- Goals -->
-- Add a `createCollectionAction` server action in `@/lib/actions/dashboard`
-- Add a `createCollectionSchema` zod schema in `@/schema/dashboard` with `title` (min 3 chars) and `description` (min 10 chars), both required
-- Validate client-side with react-hook-form + zodResolver and server-side with safeParse (joining error messages with `, `)
-- The "New Collection" button opens a dialog with title and description fields
-- Submit button shows a loading spinner while pending, otherwise shows "Create Collection"
 
 <!-- Status -->
-Completed
 
 
 <!-- History -->
