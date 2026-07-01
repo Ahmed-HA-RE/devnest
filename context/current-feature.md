@@ -1,21 +1,12 @@
 # Current Feature
 
 <!-- Feature name -->
-Collections Routes
 
 <!-- Feature Description -->
-Add two new dashboard routes for browsing collections: a `/dashboard/collections` index page listing all the user's collections, and a `/dashboard/collections/[id]` detail page showing the items inside a specific collection. Update existing sidebar links and the dashboard home "View all" link to point to the new routes, and make every collection card clickable so it navigates to its detail page.
 
 <!-- Goals -->
-- Create `/dashboard/collections` page that fetches and displays all collections as clickable `CollectionCard` links (border colored by primary item type)
-- Create `/dashboard/collections/[id]` page with folder icon + collection name on the left and total item count on the right; items grouped by type: Images section using `ImageGalleryClient`, Files section using `FileListClient`, all other types in a standard `ItemsGridClient` grid
-- Update the "View all collections" link in the sidebar (`app-sidebar.tsx`) from `/collections` to `/dashboard/collections`
-- Update per-collection links in the sidebar from `/collections/${id}` to `/dashboard/collections/${id}`
-- Update the "View all" link in `recent-collections.tsx` from `/collections` to `/dashboard/collections`
-- Make every collection card on the dashboard home page link to `/dashboard/collections/${id}`
 
 <!-- Status -->
-Completed
 
 
 <!-- History -->
