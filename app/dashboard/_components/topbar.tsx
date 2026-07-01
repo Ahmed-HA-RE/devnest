@@ -1,8 +1,8 @@
-import { FiFolderPlus, FiSearch } from 'react-icons/fi';
+import { FiSearch } from 'react-icons/fi';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import CreateCollectionDialog from './create-collection-dialog';
 import CreateTypeDialog from './create-type-dialog';
 import ThemeToggle from './theme-toggle';
 
@@ -23,10 +23,7 @@ const Topbar = () => {
       </div>
       <div className='flex items-center gap-2'>
         <ThemeToggle />
-        <Button variant='outline' className='hidden md:inline-flex'>
-          <FiFolderPlus />
-          New Collection
-        </Button>
+        <CreateCollectionDialog />
         <CreateTypeDialog />
       </div>
     </header>

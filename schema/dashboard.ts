@@ -45,3 +45,16 @@ export const createTypeSchema = editTypeSchema
   );
 
 export type CreateTypeSchema = z.infer<typeof createTypeSchema>;
+
+export const createCollectionSchema = z.object({
+  title: z
+    .string()
+    .min(3, 'Collection title must be at least 3 characters')
+    .trim(),
+  description: z
+    .string()
+    .min(10, 'Collection description must be at least 10 characters')
+    .trim(),
+});
+
+export type CreateCollectionSchema = z.infer<typeof createCollectionSchema>;

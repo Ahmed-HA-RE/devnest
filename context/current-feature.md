@@ -1,12 +1,20 @@
 # Current Feature
 
 <!-- Feature name -->
+Create New Collection
 
 <!-- Feature Description -->
+Allow users to create a new collection by clicking the "New Collection" button in the top bar, which opens a shadcn dialog with a title and description form.
 
 <!-- Goals -->
+- Add a `createCollectionAction` server action in `@/lib/actions/dashboard`
+- Add a `createCollectionSchema` zod schema in `@/schema/dashboard` with `title` (min 3 chars) and `description` (min 10 chars), both required
+- Validate client-side with react-hook-form + zodResolver and server-side with safeParse (joining error messages with `, `)
+- The "New Collection" button opens a dialog with title and description fields
+- Submit button shows a loading spinner while pending, otherwise shows "Create Collection"
 
 <!-- Status -->
+Completed
 
 
 <!-- History -->
@@ -44,3 +52,4 @@
 - 2026-06-30: Implemented Image Gallery Display — replaced the generic list/card view for the `image` type with a dedicated gallery layout. Added `ImageGalleryCard` (aspect-video `next/image` thumbnail with group-hover scale, pinned/favorite icons), `ImageGalleryClient` (client wrapper owning selected-item state + `ItemDrawer`), and `ImageGalleryCardSkeleton`; exported `ImageGalleryGridSkeleton` from `items-grid-skeleton.tsx`. `ItemsGrid` now branches on `type === 'image'` to render the gallery path with a narrowed Prisma select (`id`, `title`, `fileUrl`, `fileName`, `isPinned`, `isFavorite`, `type`). `page.tsx` picks `ImageGalleryGridSkeleton` as the `<Suspense>` fallback for the image route. Added Cloudinary `remotePatterns` to `next.config.ts`. Upgraded the drawer's image preview from a `max-h-64`-capped `<img>` to a full-width `aspect-video` `<Image>` for a more prominent display. Build and TypeScript clean.
 - 2026-06-30: Implemented Files Type UI Display — replaced the generic grid/card layout for the `file` item type with a dedicated Dropbox-inspired 1-column list. Added `FileListCard` (`app/dashboard/items/[type]/_components/file-list-card.tsx`) with a `FaFileAlt` icon box, title, description, formatted file size (B/KB/MB/GB), createdAt, and a shadcn `Button size="icon"` wrapping an `<a download>` link with `FaDownload` that stops click propagation so the card's drawer-open handler isn't triggered. Added `FileListClient` (client wrapper with selected-item state + `ItemDrawer`) and `FileListCardSkeleton`; exported `FileListGridSkeleton` from `items-grid-skeleton.tsx`. `ItemsGrid` now branches on `type === 'file'` alongside the existing `type === 'image'` branch, with a narrowed Prisma select (`id`, `title`, `description`, `fileUrl`, `fileName`, `fileSize`, `isPinned`, `isFavorite`, `createdAt`, `type`). `page.tsx` uses `FileListGridSkeleton` as the `<Suspense>` fallback for the file route. Responsive: flex-row on desktop, flex-col on mobile. Build and TypeScript clean.
 - 2026-06-30: Implemented Quick Wins (Refactor) — applied two targeted fixes from a codebase audit. Added rate limiting to `app/api/upload/route.ts`: POST throttled at 10 req/60s and DELETE at 20 req/60s using the existing `rateLimit()` helper and `getClientIp(request.headers)`, matching the auth route pattern; prevents cost-amplification attacks on Cloudinary quota. Removed `loading='eager'` from `ImageGalleryCard` (`app/dashboard/items/[type]/_components/image-gallery-card.tsx`) to restore `next/image` default lazy loading, avoiding eager fetch of all below-the-fold thumbnails on page load. `tsc --noEmit` clean.
+- 2026-07-01: Implemented Create New Collection — added `createCollectionSchema`/`CreateCollectionSchema` to `schema/dashboard.ts` (title min 3 chars, description min 10 chars, both required). Added `createCollectionAction` (`lib/actions/dashboard/create-collection-action.ts`) with session auth, `safeParse` validation (joining error messages with `, `), and `prisma.collection.create`, revalidating `/dashboard`. Built `CreateCollectionDialog` (`app/dashboard/_components/create-collection-dialog.tsx`) as a client component with `react-hook-form` + `zodResolver`, Title and Description fields with inline `FieldError`, and a Spinner/"Create Collection" submit button. Replaced the static "New Collection" button in `topbar.tsx` with the new dialog trigger. Added a Vitest suite (`create-collection-action.test.ts`, 5 tests) covering unauthorized, title-too-short, description-too-short, success with revalidation, and DB error paths. Applied formatting and ring-width cleanup to `components/ui/textarea.tsx`. All 34 tests passing.
