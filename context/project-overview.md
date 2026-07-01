@@ -35,9 +35,9 @@ Developers keep their essentials scattered across too many places:
 | Language     | TypeScript                         |
 | Database     | Neon PostgreSQL + Prisma ORM       |
 | Caching      | Redis (optional)                   |
-| File Storage | Cloudflare R2                      |
+| File Storage | Cloudinary                         |
 | CSS / UI     | Tailwind CSS v4 + ShadCN           |
-| Auth         | Better Auth (email + GitHub OAuth) |
+| Auth         | Better Auth (email + GitHub + Google OAuth) |
 | AI           | OpenAI gpt-5-nano                  |
 | Deployment   | Vercel                             |
 | Monitoring   | Sentry (post-MVP)                  |
@@ -67,7 +67,7 @@ Email + Password and GitHub OAuth via Better Auth.
 - Favorites & pinned items
 - Recently used
 - Markdown editor for text items
-- File uploads (images, docs, templates) → stored on Cloudflare R2
+- File uploads (images, docs, templates) → stored on Cloudinary
 - Import from files
 - Export as JSON or ZIP
 - Dark mode (default)
@@ -201,7 +201,7 @@ graph TD
   Client["Browser / Mobile"]
   Client <-->|"REST / Server Actions"| API["Next.js API Layer"]
   API --> DB[("Neon PostgreSQL\n+ Prisma")]
-  API --> R2[("Cloudflare R2\nFile Storage")]
+  API --> R2[("Cloudinary\nFile Storage")]
   API --> AI["OpenAI gpt-5-nano"]
   API --> Cache[("Redis Cache\n(optional)")]
 ```
@@ -215,7 +215,8 @@ flowchart LR
   NA --> P{"Provider"}
   P -->|Email + Password| DB[("Neon DB")]
   P -->|GitHub OAuth| GH["GitHub"]
-  DB & GH --> Session["JWT Session"]
+  P -->|Google OAuth| GL["Google"]
+  DB & GH & GL --> Session["JWT Session"]
   Session --> App["App Access"]
 ```
 
@@ -283,7 +284,7 @@ Below are the design screenshots for the dashboard. It doesn't have to be pixel 
 
 - [ ] AI features (auto-tag, summary, explain, optimize)
 - [ ] Custom item types
-- [ ] File uploads → Cloudflare R2
+- [x] File uploads → Cloudinary
 - [ ] Export (JSON / ZIP)
 - [ ] Stripe billing + upgrade flow
 

@@ -78,7 +78,6 @@ const ItemEditForm = ({
     },
   });
 
-  //  eslint-disable-next-line
   const title = watch('title');
   const language = watch('language');
 
